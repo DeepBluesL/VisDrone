@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "original_release_commit": "af2026e8e54643714617bcbcd18de93fe96de508",
+  "original_manifest_sha256": "ad3dcbda0130d4932f1db1e51e2051f2d4656421a52c8fa7eac5cb1fc0992b0e",
+  "verified_unchanged_artifact_count": 123,
+  "scope": "Every artifact in the original release manifest; no archived pilot artifacts were changed."
+}

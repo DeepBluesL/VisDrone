@@ -1,0 +1,13 @@
+{
+  "variant": "lsconv",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 203.4,
+  "metrics": {
+    "metrics/precision(B)": 0.17892867965740558,
+    "metrics/recall(B)": 0.12404907667705918,
+    "metrics/mAP50(B)": 0.09140616775861947,
+    "metrics/mAP50-95(B)": 0.04203028351522981
+  }
+}

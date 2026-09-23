@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 os.environ.setdefault("YOLO_CONFIG_DIR", str(ROOT / ".runtime" / "ultralytics"))
 os.environ.setdefault("MPLCONFIGDIR", str(ROOT / ".runtime" / "matplotlib"))
+from scripts.diagnostic_provenance import raw_inputs_sha256
 
 CLASS_NAMES = (
     "pedestrian",
@@ -338,6 +339,8 @@ def evaluate(args: argparse.Namespace) -> dict[str, object]:
         raise RuntimeError(f"no prediction returned for {len(missing_results)} images")
 
     payload: dict[str, object] = {
+        "schema_version": 2,
+        "diagnostic_version": "visdrone_raw_recall_v2",
         "diagnostic": "class-aware ground-truth recall under natural VisDrone occlusion",
         "protocol": (
             "Predictions are greedily matched by descending confidence against all eligible "
@@ -368,6 +371,7 @@ def evaluate(args: argparse.Namespace) -> dict[str, object]:
         "provenance": {
             "weights_sha256": _sha256_file(weights),
             "filenames_sha256": _filename_digest(paths),
+            "raw_image_annotation_sha256": raw_inputs_sha256(data_root, paths),
             "filenames_digest_definition": "SHA-256 of sorted evaluated basenames, each followed by newline",
         },
     }

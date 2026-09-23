@@ -31,3 +31,14 @@ Downloads use archives referenced by the official repository and the
 Dataset rights and terms remain with their original owners and are separate from
 the repository's code license. Original images and annotations are not bundled.
 Download checksums and transformation manifests document the locally used files.
+
+The additional lightweight-module study is specified in
+[NEW_MODULES.md](NEW_MODULES.md). StarBlock is adapted from the Apache-2.0
+StarNet implementation and HaarWTConv from the MIT WTConv implementation;
+their license texts are retained in `licenses/`. FasterNet partial convolution
+and LSConv are independent implementations of the published algorithms. The
+audited FasterNet and LSNet repositories did not declare source-code licenses;
+their source files are not redistributed. Pinned source URLs and audit hashes
+are recorded in `classic_module_sources.json`, `wtconv_sources.json`, and
+`lsconv_sources.json`. These experiments adapt operators into a YOLO detector
+and do not reproduce the authors' complete networks or optimized runtimes.

@@ -1,0 +1,18 @@
+{
+  "visualized_variants": [
+    "baseline",
+    "ghostconv",
+    "pconv",
+    "star",
+    "wtconv",
+    "lsconv"
+  ],
+  "visualized_seed": 179,
+  "image_selection_seed": 179,
+  "selection_method": "All protocol variants at the preselected minimum protocol seed (179); qualitative images selected independently of predictions with fixed seed 179.",
+  "performance_aggregation": "All model performance aggregates use all protocol seeds.",
+  "predictions_figure": "assets/module_extension/predictions.png",
+  "predictions_sidecar": "assets/module_extension/predictions.json",
+  "occlusion_evaluated_run_count": 18,
+  "expected_run_count": 18
+}

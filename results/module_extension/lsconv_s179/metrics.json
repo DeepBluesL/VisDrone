@@ -1,0 +1,174 @@
+{
+  "status": "completed",
+  "variant": "lsconv",
+  "factors": [
+    "lsconv"
+  ],
+  "seed": 179,
+  "epochs": 10,
+  "imgsz": 512,
+  "batch": 16,
+  "initialization": "from scratch; no pretrained checkpoint",
+  "evaluation_split": "official validation",
+  "evaluation_protocol": "Ultralytics YOLO-converted 10-class AP; not official VisDrone ignore-region evaluation",
+  "checkpoint_selection": "best validation mAP50-95 within fixed epoch budget",
+  "selected_epoch": 10,
+  "metrics": {
+    "metrics/precision(B)": 0.17892867965740558,
+    "metrics/recall(B)": 0.12404907667705918,
+    "metrics/mAP50(B)": 0.09140616775861947,
+    "metrics/mAP50-95(B)": 0.04203028351522981
+  },
+  "per_class": [
+    {
+      "id": 0,
+      "name": "pedestrian",
+      "ap50": 0.05919764950601943,
+      "ap50_95": 0.018300748916453134
+    },
+    {
+      "id": 1,
+      "name": "people",
+      "ap50": 0.0798377885640977,
+      "ap50_95": 0.023556818642107534
+    },
+    {
+      "id": 2,
+      "name": "bicycle",
+      "ap50": 0.015923989241125137,
+      "ap50_95": 0.003787517814940379
+    },
+    {
+      "id": 3,
+      "name": "car",
+      "ap50": 0.44407346523407665,
+      "ap50_95": 0.2381783411989149
+    },
+    {
+      "id": 4,
+      "name": "van",
+      "ap50": 0.08468831534250887,
+      "ap50_95": 0.04647386489759543
+    },
+    {
+      "id": 5,
+      "name": "truck",
+      "ap50": 0.030705257849526227,
+      "ap50_95": 0.015485771944627778
+    },
+    {
+      "id": 6,
+      "name": "tricycle",
+      "ap50": 0.03210772811891438,
+      "ap50_95": 0.012819846527468103
+    },
+    {
+      "id": 7,
+      "name": "awning-tricycle",
+      "ap50": 0.019370442418318038,
+      "ap50_95": 0.010249839207845465
+    },
+    {
+      "id": 8,
+      "name": "bus",
+      "ap50": 0.04050725330044967,
+      "ap50_95": 0.01842501815231722
+    },
+    {
+      "id": 9,
+      "name": "motor",
+      "ap50": 0.10764978801115851,
+      "ap50_95": 0.033025067850028164
+    }
+  ],
+  "speed_ms": {
+    "preprocess": 0.02916094889816209,
+    "inference": 0.4331009124150386,
+    "loss": 0.00013923357465188868,
+    "postprocess": 2.8955673357720855
+  },
+  "parameters": 2577750,
+  "trainable_parameters": 2577734,
+  "gflops_at_imgsz": 4.507762688,
+  "gflops_method": "Convolution and linear MACs x 2, batch 1, includes fixed Gabor/Haar analysis and synthesis plus LS dynamic spatial MACs; excludes normalization, pooling, activation, elementwise gates/scales, decode and NMS; not total hardware FLOPs",
+  "training_and_final_validation_seconds": 203.99017119407654,
+  "peak_cuda_reserved_gb": 5.911871488,
+  "data_yaml_sha256": "f8afdda8102c5da67eabac167cdfda6a3609b33c23d29f38410eaa360f5ae478",
+  "checkpoint_sha256": "81138f6fbaddc84a125cf37ad70dfb0e45b1d75154b4a616e0195664cbe8b7c8",
+  "data_fingerprint": {
+    "train": {
+      "images": 2048,
+      "image_and_label_sha256": "35691d3decddd9366f16cf90d2877f87472c0fc230f8442fb6951103878a8a3d"
+    },
+    "val": {
+      "images": 548,
+      "image_and_label_sha256": "dcfe7073679ec50496683ebdaf9d25a6c69b515fbee4793c9118147d7c4faae7"
+    }
+  },
+  "training_code_sha256": "8e6fd6d241f3cba56bafe50bfe70d1ee7109252dacff52cd56b374d191d47b65",
+  "environment_fingerprint": {
+    "python": "3.10.13",
+    "packages": {
+      "torch": "2.9.0.dev20250907+cu128",
+      "torchvision": "0.24.0.dev20250907+cu128",
+      "ultralytics": "8.3.195",
+      "numpy": "1.26.4",
+      "Pillow": "11.3.0"
+    }
+  },
+  "environment": {
+    "python": "3.10.13",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "torch": "2.9.0.dev20250907+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 5090 D",
+    "torchvision": "0.24.0.dev20250907+cu128",
+    "ultralytics": "8.3.195",
+    "numpy": "1.26.4",
+    "Pillow": "11.3.0",
+    "matplotlib": "3.10.6"
+  },
+  "training": {
+    "model": "yolov8n.yaml",
+    "epochs": 10,
+    "imgsz": 512,
+    "batch": 16,
+    "workers": 4,
+    "seed": 179,
+    "device": "0",
+    "exist_ok": false,
+    "pretrained": false,
+    "optimizer": "AdamW",
+    "lr0": 0.001,
+    "lrf": 0.1,
+    "weight_decay": 0.0005,
+    "nbs": 16,
+    "momentum": 0.9,
+    "warmup_epochs": 1.0,
+    "cos_lr": true,
+    "patience": 0,
+    "deterministic": true,
+    "amp": false,
+    "cache": false,
+    "plots": true,
+    "save": true,
+    "val": true,
+    "close_mosaic": 0,
+    "mosaic": 0.0,
+    "mixup": 0.0,
+    "copy_paste": 0.0,
+    "degrees": 0.0,
+    "translate": 0.1,
+    "scale": 0.3,
+    "shear": 0.0,
+    "perspective": 0.0,
+    "flipud": 0.0,
+    "fliplr": 0.5,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "max_det": 500,
+    "verbose": false
+  },
+  "run_directory": "runs/module_extension/lsconv_s179_attempt_1790139323386586600"
+}

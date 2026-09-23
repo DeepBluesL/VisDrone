@@ -1,0 +1,77 @@
+{
+  "training_code_sha256": "8e6fd6d241f3cba56bafe50bfe70d1ee7109252dacff52cd56b374d191d47b65",
+  "records": [
+    {
+      "variant": "baseline",
+      "loss_components": [
+        0.01868363283574581,
+        0.6655750274658203,
+        0.010795671492815018
+      ],
+      "parameters": 3012798,
+      "gflops_at_512": 5.17914624,
+      "cuda_forward_backward_optimizer": "passed",
+      "seconds": 1.5024662017822266
+    },
+    {
+      "variant": "ghostconv",
+      "loss_components": [
+        0.018570147454738617,
+        0.6642129421234131,
+        0.010839363560080528
+      ],
+      "parameters": 2822958,
+      "gflops_at_512": 4.901732352,
+      "cuda_forward_backward_optimizer": "passed",
+      "seconds": 0.22273921966552734
+    },
+    {
+      "variant": "pconv",
+      "loss_components": [
+        0.024930570274591446,
+        0.6705660820007324,
+        0.014452049508690834
+      ],
+      "parameters": 2655038,
+      "gflops_at_512": 4.61553664,
+      "cuda_forward_backward_optimizer": "passed",
+      "seconds": 0.17637300491333008
+    },
+    {
+      "variant": "star",
+      "loss_components": [
+        0.02192113548517227,
+        0.6657116413116455,
+        0.012724893167614937
+      ],
+      "parameters": 2887934,
+      "gflops_at_512": 5.010980864,
+      "cuda_forward_backward_optimizer": "passed",
+      "seconds": 0.20090842247009277
+    },
+    {
+      "variant": "wtconv",
+      "loss_components": [
+        0.014828002080321312,
+        0.6598351001739502,
+        0.008564116433262825
+      ],
+      "parameters": 2715262,
+      "gflops_at_512": 4.64838656,
+      "cuda_forward_backward_optimizer": "passed",
+      "seconds": 0.21810412406921387
+    },
+    {
+      "variant": "lsconv",
+      "loss_components": [
+        0.02643267810344696,
+        0.6710090637207031,
+        0.016139760613441467
+      ],
+      "parameters": 2577750,
+      "gflops_at_512": 4.507762688,
+      "cuda_forward_backward_optimizer": "passed",
+      "seconds": 0.21109676361083984
+    }
+  ]
+}

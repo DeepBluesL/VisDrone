@@ -1,4 +1,4 @@
-# New lightweight-module comparison: research record and preregistration
+# New lightweight-module comparison: research record and fixed protocol
 
 ## Scope
 
@@ -15,10 +15,9 @@ where they were sufficiently reproducible, but it also retains older,
 well-defined lightweight operators when they provide a cleaner controlled
 intervention.
 
-This document preregisters the extension before its accuracy results are
-reported. It does not state or imply that any arm has completed training or
-outperforms another arm. Actual results, after verification, belong in the
-project README and generated result artifacts.
+This document records the candidate rationale and fixed experiment protocol.
+It is not an external preregistration. Verified results and their interpretation
+belong in the project README and generated result artifacts.
 
 ## Fixed experiment
 
@@ -32,7 +31,9 @@ The experiment has six arms:
 6. `lsconv`: LSConv inside the same C2f stages.
 
 Every arm is run with seeds **179, 2026, and 3407**, for 18 planned runs in
-total. Each run uses the same fixed 2,048-image training subset and all 548
+total. The training subset was selected once with dataset-preparation seed 179;
+the three model seeds do not resample it. Each run uses these same 2,048 training
+images and all 548
 official validation images, 10 epochs, 512 x 512 inputs, batch size 16, AdamW,
 and training from scratch. Dataset preparation, augmentation, optimizer
 settings, validation procedure, checkpoint selection, and reporting code are
@@ -149,11 +150,17 @@ The valid question is therefore: **which complete, explicitly specified
 detector intervention performs best under the fixed short-budget protocol?**
 Results cannot support a causal claim that PConv, star multiplication, wavelet
 decomposition, or dynamic aggregation alone caused a difference. Parameter
-counts, counted Conv/Linear FLOPs, and measured latency should accompany
+counts, accounted FLOPs, and validator-stage inference timing should accompany
 accuracy so that capacity and systems tradeoffs remain visible. In particular,
 the unfolded LSConv implementation is mathematically aligned with the fused
 operator but has different memory and latency behavior, and theoretical FLOPs
 do not determine Windows/PyTorch throughput.
+
+The recorded FLOP estimate counts convolution/linear MACs twice, including
+functional Haar analysis/synthesis and LSConv dynamic spatial aggregation.
+It omits normalization, activations, pooling, elementwise operations, decoding,
+and NMS. Validator timing is a batched per-image measurement in the recorded
+environment, not an isolated end-to-end deployment benchmark.
 
 ## Verification before accepting results
 

@@ -1,0 +1,183 @@
+{
+  "figure": "E:\\DeepLearning\\ML_mid\\VisDrone\\assets\\module_extension\\predictions.png",
+  "data_root": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\raw\\VisDrone2019-DET-val",
+  "selection": {
+    "method": "local random sample from sorted filenames",
+    "seed": 179,
+    "filenames": [
+      "0000271_04401_d_0000394.jpg",
+      "0000215_00000_d_0000256.jpg",
+      "0000116_00819_d_0000084.jpg"
+    ]
+  },
+  "inference": {
+    "imgsz": 512,
+    "confidence_threshold": 0.05,
+    "nms_iou_threshold": 0.5,
+    "max_det": 500,
+    "max_draw": 80,
+    "device": "0"
+  },
+  "checkpoints": [
+    {
+      "label": "baseline",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\module_extension\\baseline_s179.pt",
+      "sha256": "9d4c389c5e4c84492cade72dc633b7071ba5fed5538672ec7204d9d40f8a7d69"
+    },
+    {
+      "label": "ghostconv",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\module_extension\\ghostconv_s179.pt",
+      "sha256": "226100426752bc53b4578eaee8c1d0c2b2230dcb9b9038d0cf5a0e76b7687f8e"
+    },
+    {
+      "label": "pconv",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\module_extension\\pconv_s179.pt",
+      "sha256": "701cc931ef347a2a42efab2fcdfc6cac3e63c8e70fe790a04f6f6105466cf25b"
+    },
+    {
+      "label": "star",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\module_extension\\star_s179.pt",
+      "sha256": "83867b24c0f23d1e4bc459481e51438cf2e1012d3bae26d59e0a572d86a0e690"
+    },
+    {
+      "label": "wtconv",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\module_extension\\wtconv_s179.pt",
+      "sha256": "a63d5976bf27d079fc069ada926c046166e467eca9196a4760c7ac3084c6c3e1"
+    },
+    {
+      "label": "lsconv",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\module_extension\\lsconv_s179.pt",
+      "sha256": "81138f6fbaddc84a125cf37ad70dfb0e45b1d75154b4a616e0195664cbe8b7c8"
+    }
+  ],
+  "images": [
+    {
+      "filename": "0000271_04401_d_0000394.jpg",
+      "eligible_ground_truth_count": 86,
+      "models": [
+        {
+          "label": "baseline",
+          "prediction_count": 167,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "ghostconv",
+          "prediction_count": 154,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "pconv",
+          "prediction_count": 147,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "star",
+          "prediction_count": 146,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "wtconv",
+          "prediction_count": 167,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "lsconv",
+          "prediction_count": 110,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        }
+      ]
+    },
+    {
+      "filename": "0000215_00000_d_0000256.jpg",
+      "eligible_ground_truth_count": 157,
+      "models": [
+        {
+          "label": "baseline",
+          "prediction_count": 168,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "ghostconv",
+          "prediction_count": 146,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "pconv",
+          "prediction_count": 147,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "star",
+          "prediction_count": 161,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "wtconv",
+          "prediction_count": 139,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "lsconv",
+          "prediction_count": 136,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        }
+      ]
+    },
+    {
+      "filename": "0000116_00819_d_0000084.jpg",
+      "eligible_ground_truth_count": 36,
+      "models": [
+        {
+          "label": "baseline",
+          "prediction_count": 57,
+          "rendered_count": 57,
+          "render_limit_applied": false
+        },
+        {
+          "label": "ghostconv",
+          "prediction_count": 91,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "pconv",
+          "prediction_count": 67,
+          "rendered_count": 67,
+          "render_limit_applied": false
+        },
+        {
+          "label": "star",
+          "prediction_count": 77,
+          "rendered_count": 77,
+          "render_limit_applied": false
+        },
+        {
+          "label": "wtconv",
+          "prediction_count": 70,
+          "rendered_count": 70,
+          "render_limit_applied": false
+        },
+        {
+          "label": "lsconv",
+          "prediction_count": 77,
+          "rendered_count": 77,
+          "render_limit_applied": false
+        }
+      ]
+    }
+  ],
+  "ground_truth_protocol": "score > 0, source class 1..10, valid clipped boxes",
+  "credits": "VisDrone2019-DET validation images and annotations, VisDrone team at Tianjin University (https://github.com/VisDrone/VisDrone-Dataset); detector scaffold from Ultralytics YOLO."
+}

@@ -1,0 +1,2052 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "suite": "module_extension",
+  "expected_run_count": 18,
+  "verified_run_count": 18,
+  "passed_run_count": 18,
+  "allow_incomplete": false,
+  "check_current_code": true,
+  "suite_checks": {
+    "snapshot_dataset_yaml_exists": true,
+    "snapshot_dataset_yaml_sha256": true,
+    "snapshot_preparation_manifest_exists": true,
+    "snapshot_preparation_manifest_sha256": true,
+    "current_code_equals_protocol": true
+  },
+  "missing_runs": [],
+  "unexpected_runs": [],
+  "runs": [
+    {
+      "run_id": "baseline_s179",
+      "variant": "baseline",
+      "seed": 179,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/baseline_s179/metrics.json",
+        "checkpoint": "checkpoints/module_extension/baseline_s179.pt",
+        "epochs_csv": "results/module_extension/baseline_s179/epochs.csv",
+        "checkpoint_sha256": "9d4c389c5e4c84492cade72dc633b7071ba5fed5538672ec7204d9d40f8a7d69",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "parameter_count": 3012798,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04466,
+          "maximum_csv_ap50_95": 0.04466,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "ghostconv_s179",
+      "variant": "ghostconv",
+      "seed": 179,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "ghostconv_silu": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/ghostconv_s179/metrics.json",
+        "checkpoint": "checkpoints/module_extension/ghostconv_s179.pt",
+        "epochs_csv": "results/module_extension/ghostconv_s179/epochs.csv",
+        "checkpoint_sha256": "226100426752bc53b4578eaee8c1d0c2b2230dcb9b9038d0cf5a0e76b7687f8e",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "visdrone_migration.modules.GhostConv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "visdrone_migration.modules.GhostConv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "visdrone_migration.modules.GhostConv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "visdrone_migration.modules.GhostConv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "visdrone_migration.modules.GhostConv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "visdrone_migration.modules.GhostConv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "visdrone_migration.modules.GhostConv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "visdrone_migration.modules.GhostConv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "ghostconv_silu": {
+          "1": true,
+          "3": true,
+          "5": true,
+          "7": true
+        },
+        "parameter_count": 2822958,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.03871,
+          "maximum_csv_ap50_95": 0.03871,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "pconv_s179",
+      "variant": "pconv",
+      "seed": 179,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/pconv_s179/metrics.json",
+        "checkpoint": "checkpoints/module_extension/pconv_s179.pt",
+        "epochs_csv": "results/module_extension/pconv_s179/epochs.csv",
+        "checkpoint_sha256": "701cc931ef347a2a42efab2fcdfc6cac3e63c8e70fe790a04f6f6105466cf25b",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "pconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock",
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          },
+          "6": {
+            "kind": "pconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock",
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          },
+          "8": {
+            "kind": "pconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          }
+        },
+        "parameter_count": 2655038,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.03948,
+          "maximum_csv_ap50_95": 0.03948,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "star_s179",
+      "variant": "star",
+      "seed": 179,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/star_s179/metrics.json",
+        "checkpoint": "checkpoints/module_extension/star_s179.pt",
+        "epochs_csv": "results/module_extension/star_s179/epochs.csv",
+        "checkpoint_sha256": "83867b24c0f23d1e4bc459481e51438cf2e1012d3bae26d59e0a572d86a0e690",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "star",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock",
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          },
+          "6": {
+            "kind": "star",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock",
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          },
+          "8": {
+            "kind": "star",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          }
+        },
+        "parameter_count": 2887934,
+        "selection": {
+          "selected_epoch": 9,
+          "selected_csv_ap50_95": 0.04233,
+          "maximum_csv_ap50_95": 0.04233,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "wtconv_s179",
+      "variant": "wtconv",
+      "seed": 179,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "wtconv_fixed_haar_buffers": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/wtconv_s179/metrics.json",
+        "checkpoint": "checkpoints/module_extension/wtconv_s179.pt",
+        "epochs_csv": "results/module_extension/wtconv_s179/epochs.csv",
+        "checkpoint_sha256": "a63d5976bf27d079fc069ada926c046166e467eca9196a4760c7ac3084c6c3e1",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "wtconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock",
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          },
+          "6": {
+            "kind": "wtconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock",
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          },
+          "8": {
+            "kind": "wtconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          }
+        },
+        "wtconv_fixed_haar_buffers": {
+          "buffer_count": 10,
+          "atol": 0.001,
+          "rtol": 0.001,
+          "max_abs_difference": 0.0
+        },
+        "parameter_count": 2715262,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04154,
+          "maximum_csv_ap50_95": 0.04154,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "lsconv_s179",
+      "variant": "lsconv",
+      "seed": 179,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/lsconv_s179/metrics.json",
+        "checkpoint": "checkpoints/module_extension/lsconv_s179.pt",
+        "epochs_csv": "results/module_extension/lsconv_s179/epochs.csv",
+        "checkpoint_sha256": "81138f6fbaddc84a125cf37ad70dfb0e45b1d75154b4a616e0195664cbe8b7c8",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "lsconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv",
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          },
+          "6": {
+            "kind": "lsconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv",
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          },
+          "8": {
+            "kind": "lsconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          }
+        },
+        "parameter_count": 2577750,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04203,
+          "maximum_csv_ap50_95": 0.04203,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "baseline_s2026",
+      "variant": "baseline",
+      "seed": 2026,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/baseline_s2026/metrics.json",
+        "checkpoint": "checkpoints/module_extension/baseline_s2026.pt",
+        "epochs_csv": "results/module_extension/baseline_s2026/epochs.csv",
+        "checkpoint_sha256": "ddc3e73e3c33ce7c1ed7eb020ecc7e5a874264384946d80fd8fe44d68d461d34",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "parameter_count": 3012798,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04553,
+          "maximum_csv_ap50_95": 0.04553,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "ghostconv_s2026",
+      "variant": "ghostconv",
+      "seed": 2026,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "ghostconv_silu": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/ghostconv_s2026/metrics.json",
+        "checkpoint": "checkpoints/module_extension/ghostconv_s2026.pt",
+        "epochs_csv": "results/module_extension/ghostconv_s2026/epochs.csv",
+        "checkpoint_sha256": "88e36938b673b84a6504a1e6117df9603ee2c6874c1be7ac3f937732fb89f7c4",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "visdrone_migration.modules.GhostConv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "visdrone_migration.modules.GhostConv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "visdrone_migration.modules.GhostConv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "visdrone_migration.modules.GhostConv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "visdrone_migration.modules.GhostConv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "visdrone_migration.modules.GhostConv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "visdrone_migration.modules.GhostConv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "visdrone_migration.modules.GhostConv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "ghostconv_silu": {
+          "1": true,
+          "3": true,
+          "5": true,
+          "7": true
+        },
+        "parameter_count": 2822958,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04173,
+          "maximum_csv_ap50_95": 0.04173,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "pconv_s2026",
+      "variant": "pconv",
+      "seed": 2026,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/pconv_s2026/metrics.json",
+        "checkpoint": "checkpoints/module_extension/pconv_s2026.pt",
+        "epochs_csv": "results/module_extension/pconv_s2026/epochs.csv",
+        "checkpoint_sha256": "1d1f4898c815194cab592d4ca26f52d3e4f8b79c16ee3aa0d7ca38d4ea26c1e6",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "pconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock",
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          },
+          "6": {
+            "kind": "pconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock",
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          },
+          "8": {
+            "kind": "pconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          }
+        },
+        "parameter_count": 2655038,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04075,
+          "maximum_csv_ap50_95": 0.04075,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "star_s2026",
+      "variant": "star",
+      "seed": 2026,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/star_s2026/metrics.json",
+        "checkpoint": "checkpoints/module_extension/star_s2026.pt",
+        "epochs_csv": "results/module_extension/star_s2026/epochs.csv",
+        "checkpoint_sha256": "d8b0b633385b98e35c83e314bd7b410ef0649c87df4b8e8bc3f6b1e346cee44e",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "star",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock",
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          },
+          "6": {
+            "kind": "star",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock",
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          },
+          "8": {
+            "kind": "star",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          }
+        },
+        "parameter_count": 2887934,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04135,
+          "maximum_csv_ap50_95": 0.04135,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "wtconv_s2026",
+      "variant": "wtconv",
+      "seed": 2026,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "wtconv_fixed_haar_buffers": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/wtconv_s2026/metrics.json",
+        "checkpoint": "checkpoints/module_extension/wtconv_s2026.pt",
+        "epochs_csv": "results/module_extension/wtconv_s2026/epochs.csv",
+        "checkpoint_sha256": "214eac9969e06def91425eea4ee93e098ac6c22f81bb361e2c971692b8d30478",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "wtconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock",
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          },
+          "6": {
+            "kind": "wtconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock",
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          },
+          "8": {
+            "kind": "wtconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          }
+        },
+        "wtconv_fixed_haar_buffers": {
+          "buffer_count": 10,
+          "atol": 0.001,
+          "rtol": 0.001,
+          "max_abs_difference": 0.0
+        },
+        "parameter_count": 2715262,
+        "selection": {
+          "selected_epoch": 9,
+          "selected_csv_ap50_95": 0.04256,
+          "maximum_csv_ap50_95": 0.04256,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "lsconv_s2026",
+      "variant": "lsconv",
+      "seed": 2026,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/lsconv_s2026/metrics.json",
+        "checkpoint": "checkpoints/module_extension/lsconv_s2026.pt",
+        "epochs_csv": "results/module_extension/lsconv_s2026/epochs.csv",
+        "checkpoint_sha256": "bdfc8534e0fb1b151cdacbd94d1c7fead84dffccf22ec22e6def7fe64958e01a",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "lsconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv",
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          },
+          "6": {
+            "kind": "lsconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv",
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          },
+          "8": {
+            "kind": "lsconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          }
+        },
+        "parameter_count": 2577750,
+        "selection": {
+          "selected_epoch": 9,
+          "selected_csv_ap50_95": 0.04213,
+          "maximum_csv_ap50_95": 0.04213,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "baseline_s3407",
+      "variant": "baseline",
+      "seed": 3407,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/baseline_s3407/metrics.json",
+        "checkpoint": "checkpoints/module_extension/baseline_s3407.pt",
+        "epochs_csv": "results/module_extension/baseline_s3407/epochs.csv",
+        "checkpoint_sha256": "75342486841e7fb0cd73ba00c6e53a3135cfc8e92e2d51a1c80727b8fa15d834",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "parameter_count": 3012798,
+        "selection": {
+          "selected_epoch": 9,
+          "selected_csv_ap50_95": 0.04262,
+          "maximum_csv_ap50_95": 0.04262,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "ghostconv_s3407",
+      "variant": "ghostconv",
+      "seed": 3407,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "ghostconv_silu": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/ghostconv_s3407/metrics.json",
+        "checkpoint": "checkpoints/module_extension/ghostconv_s3407.pt",
+        "epochs_csv": "results/module_extension/ghostconv_s3407/epochs.csv",
+        "checkpoint_sha256": "a93c33ef739399397e4615f1ec9c5d34f356e7a3a031021b94c2e1a7925eaf82",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "visdrone_migration.modules.GhostConv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "visdrone_migration.modules.GhostConv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "visdrone_migration.modules.GhostConv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "visdrone_migration.modules.GhostConv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "visdrone_migration.modules.GhostConv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "visdrone_migration.modules.GhostConv",
+          "4": "ultralytics.nn.modules.block.C2f",
+          "5": "visdrone_migration.modules.GhostConv",
+          "6": "ultralytics.nn.modules.block.C2f",
+          "7": "visdrone_migration.modules.GhostConv",
+          "8": "ultralytics.nn.modules.block.C2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "ghostconv_silu": {
+          "1": true,
+          "3": true,
+          "5": true,
+          "7": true
+        },
+        "parameter_count": 2822958,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.03878,
+          "maximum_csv_ap50_95": 0.03878,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "pconv_s3407",
+      "variant": "pconv",
+      "seed": 3407,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/pconv_s3407/metrics.json",
+        "checkpoint": "checkpoints/module_extension/pconv_s3407.pt",
+        "epochs_csv": "results/module_extension/pconv_s3407/epochs.csv",
+        "checkpoint_sha256": "2c481f376b5431bc8376f024052b49781c974c4a404c1b969ed2271e6ea1588c",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "pconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock",
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          },
+          "6": {
+            "kind": "pconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock",
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          },
+          "8": {
+            "kind": "pconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.FasterBlock"
+            ]
+          }
+        },
+        "parameter_count": 2655038,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.03904,
+          "maximum_csv_ap50_95": 0.03904,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "star_s3407",
+      "variant": "star",
+      "seed": 3407,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/star_s3407/metrics.json",
+        "checkpoint": "checkpoints/module_extension/star_s3407.pt",
+        "epochs_csv": "results/module_extension/star_s3407/epochs.csv",
+        "checkpoint_sha256": "9442d96b27d525e2a9b18ef8da1c1fbb81626a117baa7e4effc79d437d43a2de",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "star",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock",
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          },
+          "6": {
+            "kind": "star",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock",
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          },
+          "8": {
+            "kind": "star",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.classic_blocks.StarBlock"
+            ]
+          }
+        },
+        "parameter_count": 2887934,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04234,
+          "maximum_csv_ap50_95": 0.04234,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "wtconv_s3407",
+      "variant": "wtconv",
+      "seed": 3407,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "wtconv_fixed_haar_buffers": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/wtconv_s3407/metrics.json",
+        "checkpoint": "checkpoints/module_extension/wtconv_s3407.pt",
+        "epochs_csv": "results/module_extension/wtconv_s3407/epochs.csv",
+        "checkpoint_sha256": "a88d3bc8928876c4f355a9ae47d896307f67540eedac580b40a59f7acd18aec4",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "wtconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock",
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          },
+          "6": {
+            "kind": "wtconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock",
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          },
+          "8": {
+            "kind": "wtconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.WTBlock"
+            ]
+          }
+        },
+        "wtconv_fixed_haar_buffers": {
+          "buffer_count": 10,
+          "atol": 0.001,
+          "rtol": 0.001,
+          "max_abs_difference": 0.0
+        },
+        "parameter_count": 2715262,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04163,
+          "maximum_csv_ap50_95": 0.04163,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    },
+    {
+      "run_id": "lsconv_s3407",
+      "variant": "lsconv",
+      "seed": 3407,
+      "passed": true,
+      "checks": {
+        "record_status_completed": true,
+        "record_variant": true,
+        "record_seed": true,
+        "record_factors": true,
+        "protocol_epochs": true,
+        "protocol_imgsz": true,
+        "protocol_batch": true,
+        "protocol_workers": true,
+        "protocol_data_fingerprint": true,
+        "protocol_data_yaml_sha256": true,
+        "protocol_training_code_sha256": true,
+        "protocol_environment_fingerprint": true,
+        "checkpoint_exists": true,
+        "csv_exists": true,
+        "checkpoint_sha256": true,
+        "model_variant": true,
+        "yaml_variant": true,
+        "yaml_seed": true,
+        "class_names": true,
+        "class_count": true,
+        "active_layer_classes": true,
+        "se_wrapper_absent": true,
+        "efficient_stage_kind": true,
+        "efficient_stage_depth": true,
+        "efficient_stage_units": true,
+        "parameter_count": true,
+        "fixed_filter_bank_absent": true,
+        "csv_exact_epochs": true,
+        "selected_epoch_in_range": true,
+        "selected_epoch_is_csv_maximum": true
+      },
+      "failed_checks": [],
+      "errors": [],
+      "details": {
+        "metrics": "results/module_extension/lsconv_s3407/metrics.json",
+        "checkpoint": "checkpoints/module_extension/lsconv_s3407.pt",
+        "epochs_csv": "results/module_extension/lsconv_s3407/epochs.csv",
+        "checkpoint_sha256": "a3979e45c8b34763c411031f3b68d6dc2cb12721567170785f39321d80310787",
+        "class_names": [
+          "pedestrian",
+          "people",
+          "bicycle",
+          "car",
+          "van",
+          "truck",
+          "tricycle",
+          "awning-tricycle",
+          "bus",
+          "motor"
+        ],
+        "class_count": 10,
+        "actual_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "expected_layers": {
+          "0": "ultralytics.nn.modules.conv.Conv",
+          "1": "ultralytics.nn.modules.conv.Conv",
+          "2": "ultralytics.nn.modules.block.C2f",
+          "3": "ultralytics.nn.modules.conv.Conv",
+          "4": "visdrone_migration.model.EfficientC2f",
+          "5": "ultralytics.nn.modules.conv.Conv",
+          "6": "visdrone_migration.model.EfficientC2f",
+          "7": "ultralytics.nn.modules.conv.Conv",
+          "8": "visdrone_migration.model.EfficientC2f",
+          "9": "ultralytics.nn.modules.block.SPPF"
+        },
+        "efficient_stages": {
+          "4": {
+            "kind": "lsconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv",
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          },
+          "6": {
+            "kind": "lsconv",
+            "depth": 2,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv",
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          },
+          "8": {
+            "kind": "lsconv",
+            "depth": 1,
+            "unit_classes": [
+              "visdrone_migration.spatial_blocks.LSConv"
+            ]
+          }
+        },
+        "parameter_count": 2577750,
+        "selection": {
+          "selected_epoch": 10,
+          "selected_csv_ap50_95": 0.04204,
+          "maximum_csv_ap50_95": 0.04204,
+          "maximum_minus_selected": 0.0,
+          "tolerance": 1e-05,
+          "note": "The final EMA validation metric can differ from the rounded per-epoch CSV; selection is checked within the CSV only."
+        }
+      }
+    }
+  ],
+  "protocol": {
+    "path": "results/module_extension/protocol.json",
+    "sha256": "780411959b41e0a1ddae8438a8fddd29bceca3a057fef0c4f24aeee30d3630f8",
+    "training_code_sha256": "8e6fd6d241f3cba56bafe50bfe70d1ee7109252dacff52cd56b374d191d47b65",
+    "data_fingerprint": {
+      "train": {
+        "images": 2048,
+        "image_and_label_sha256": "35691d3decddd9366f16cf90d2877f87472c0fc230f8442fb6951103878a8a3d"
+      },
+      "val": {
+        "images": 548,
+        "image_and_label_sha256": "dcfe7073679ec50496683ebdaf9d25a6c69b515fbee4793c9118147d7c4faae7"
+      }
+    },
+    "environment_fingerprint": {
+      "python": "3.10.13",
+      "packages": {
+        "torch": "2.9.0.dev20250907+cu128",
+        "torchvision": "0.24.0.dev20250907+cu128",
+        "ultralytics": "8.3.195",
+        "numpy": "1.26.4",
+        "Pillow": "11.3.0"
+      }
+    },
+    "snapshot": {
+      "dataset_yaml": {
+        "path": "results/module_extension/data_snapshot/dataset.yaml",
+        "expected_sha256": "f8afdda8102c5da67eabac167cdfda6a3609b33c23d29f38410eaa360f5ae478",
+        "actual_sha256": "f8afdda8102c5da67eabac167cdfda6a3609b33c23d29f38410eaa360f5ae478"
+      },
+      "preparation_manifest": {
+        "path": "results/module_extension/data_snapshot/preparation_manifest.json",
+        "expected_sha256": "f422f1deb2bc0ab0d57e4345073c100d6cbe99e0fa4933f92a0b1efb42dad818",
+        "actual_sha256": "f422f1deb2bc0ab0d57e4345073c100d6cbe99e0fa4933f92a0b1efb42dad818"
+      }
+    },
+    "current_code_sha256": "8e6fd6d241f3cba56bafe50bfe70d1ee7109252dacff52cd56b374d191d47b65",
+    "current_code_equals_protocol": true
+  },
+  "verifier_provenance": {
+    "path": "scripts/verify_results.py",
+    "sha256": "18f39a33fcc80fe40bdcccbe46ccb76c2d61a148b52ad1acd6e02aee3a67eb5d",
+    "generated_at_utc": "2026-09-23T05:32:19.189078+00:00",
+    "python": "3.10.13",
+    "torch": "2.9.0.dev20250907+cu128",
+    "device_policy": "torch.load(map_location='cpu'); no model forward pass",
+    "fixed_bank_tolerance": {
+      "atol": 0.001,
+      "rtol": 0.001
+    }
+  }
+}

@@ -4,8 +4,10 @@ from pathlib import Path
 
 from scripts.report import (
     EXTENSION_ORDER,
+    aggregate_size_recall,
     paired_baseline_deltas,
     plot_paired_deltas,
+    plot_size_recall,
     protocol_run_ids,
 )
 
@@ -59,6 +61,30 @@ class ExtensionReportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "paired.png"
             self.assertTrue(plot_paired_deltas(paired, output))
+            self.assertGreater(output.stat().st_size, 0)
+
+    def test_size_recall_is_optional_and_aggregates_real_values(self):
+        self.assertEqual(aggregate_size_recall([{"variant": "baseline"}]), [])
+        records = []
+        for seed, recalls in ((179, (0.2, 0.4, 0.6)), (2026, (0.4, 0.6, 0.8))):
+            records.append(
+                {
+                    "variant": "baseline",
+                    "seed": seed,
+                    "size_strata": {
+                        label: {"total": count, "match_count": 0, "recall": recall}
+                        for label, count, recall in zip(
+                            ("small", "medium", "large"), (100, 40, 10), recalls
+                        )
+                    },
+                }
+            )
+        rows = aggregate_size_recall(records)
+        self.assertAlmostEqual(rows[0]["size_small_recall_percent_mean"], 30.0)
+        self.assertAlmostEqual(rows[0]["size_small_recall_percent_std"], 10 * 2**0.5)
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "size.png"
+            self.assertTrue(plot_size_recall(rows, output))
             self.assertGreater(output.stat().st_size, 0)
 
 

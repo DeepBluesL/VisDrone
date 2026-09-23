@@ -1,0 +1,54 @@
+{
+  "variants": [
+    "baseline",
+    "ghostconv",
+    "pconv",
+    "star",
+    "wtconv",
+    "lsconv"
+  ],
+  "seeds": [
+    179,
+    2026,
+    3407
+  ],
+  "epochs": 10,
+  "imgsz": 512,
+  "batch": 16,
+  "workers": 4,
+  "suite": "module_extension",
+  "data": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\dataset.yaml",
+  "expected_train": 2048,
+  "expected_val": 548,
+  "actual_image_counts": {
+    "train": 2048,
+    "val": 548
+  },
+  "data_fingerprint": {
+    "train": {
+      "images": 2048,
+      "image_and_label_sha256": "35691d3decddd9366f16cf90d2877f87472c0fc230f8442fb6951103878a8a3d"
+    },
+    "val": {
+      "images": 548,
+      "image_and_label_sha256": "dcfe7073679ec50496683ebdaf9d25a6c69b515fbee4793c9118147d7c4faae7"
+    }
+  },
+  "data_yaml_sha256": "f8afdda8102c5da67eabac167cdfda6a3609b33c23d29f38410eaa360f5ae478",
+  "preparation_manifest_sha256": "f422f1deb2bc0ab0d57e4345073c100d6cbe99e0fa4933f92a0b1efb42dad818",
+  "training_code_sha256": "8e6fd6d241f3cba56bafe50bfe70d1ee7109252dacff52cd56b374d191d47b65",
+  "environment_fingerprint": {
+    "python": "3.10.13",
+    "packages": {
+      "torch": "2.9.0.dev20250907+cu128",
+      "torchvision": "0.24.0.dev20250907+cu128",
+      "ultralytics": "8.3.195",
+      "numpy": "1.26.4",
+      "Pillow": "11.3.0"
+    }
+  },
+  "data_snapshot": {
+    "dataset_yaml": "results/module_extension/data_snapshot/dataset.yaml",
+    "preparation_manifest": "results/module_extension/data_snapshot/preparation_manifest.json"
+  }
+}

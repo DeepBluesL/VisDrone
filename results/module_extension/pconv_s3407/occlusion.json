@@ -1,0 +1,143 @@
+{
+  "schema_version": 2,
+  "diagnostic_version": "visdrone_raw_recall_v2",
+  "diagnostic": "class-aware ground-truth recall under natural VisDrone occlusion",
+  "protocol": "Predictions are greedily matched by descending confidence against all eligible ground truth in each image. Matching is class-aware, one-to-one, and performed before stratification. This is not AP and does not implement official VisDrone ignored-region handling.",
+  "metrics": {
+    "overall": {
+      "match_count": 9986,
+      "total": 38759,
+      "recall": 0.2576433860522717
+    },
+    "occlusion": {
+      "0": {
+        "match_count": 5960,
+        "total": 16810,
+        "recall": 0.3545508625817965
+      },
+      "1": {
+        "match_count": 3738,
+        "total": 18863,
+        "recall": 0.1981657212532471
+      },
+      "2": {
+        "match_count": 288,
+        "total": 3086,
+        "recall": 0.09332469215813351
+      }
+    },
+    "truncation": {
+      "0": {
+        "match_count": 9341,
+        "total": 37287,
+        "recall": 0.2505162657226379
+      },
+      "1": {
+        "match_count": 645,
+        "total": 1472,
+        "recall": 0.438179347826087
+      },
+      "2": {
+        "match_count": 0,
+        "total": 0,
+        "recall": null
+      }
+    },
+    "size": {
+      "small": {
+        "match_count": 3620,
+        "total": 26575,
+        "recall": 0.13621825023518344
+      },
+      "medium": {
+        "match_count": 5604,
+        "total": 11116,
+        "recall": 0.5041381792011514
+      },
+      "large": {
+        "match_count": 762,
+        "total": 1068,
+        "recall": 0.7134831460674157
+      }
+    },
+    "class": {
+      "1:pedestrian": {
+        "match_count": 923,
+        "total": 8844,
+        "recall": 0.10436454093170511
+      },
+      "2:people": {
+        "match_count": 17,
+        "total": 5125,
+        "recall": 0.0033170731707317072
+      },
+      "3:bicycle": {
+        "match_count": 0,
+        "total": 1287,
+        "recall": 0.0
+      },
+      "4:car": {
+        "match_count": 8288,
+        "total": 14064,
+        "recall": 0.5893060295790671
+      },
+      "5:van": {
+        "match_count": 79,
+        "total": 1975,
+        "recall": 0.04
+      },
+      "6:truck": {
+        "match_count": 33,
+        "total": 750,
+        "recall": 0.044
+      },
+      "7:tricycle": {
+        "match_count": 0,
+        "total": 1045,
+        "recall": 0.0
+      },
+      "8:awning-tricycle": {
+        "match_count": 1,
+        "total": 532,
+        "recall": 0.0018796992481203006
+      },
+      "9:bus": {
+        "match_count": 17,
+        "total": 251,
+        "recall": 0.06772908366533864
+      },
+      "10:motor": {
+        "match_count": 628,
+        "total": 4886,
+        "recall": 0.12853049529267294
+      }
+    }
+  },
+  "settings": {
+    "data_root": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\raw\\VisDrone2019-DET-val",
+    "weights": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\module_extension\\pconv_s3407.pt",
+    "imgsz": 512,
+    "confidence_threshold": 0.05,
+    "nms_iou_threshold": 0.5,
+    "matching_iou_threshold": 0.5,
+    "device": "0",
+    "batch": 16,
+    "max_det": 500,
+    "max_images": null,
+    "source_image_count": 548,
+    "evaluated_image_count": 548,
+    "is_subset_smoke_run": false,
+    "eligible_ground_truth": "score > 0, source class 1..10, valid after clipping",
+    "small_object_definition": "clipped raw-image area < 32^2 pixels (COCO convention)",
+    "size_bins": "small < 32^2; medium 32^2 to < 96^2; large >= 96^2 raw pixels"
+  },
+  "excluded_ground_truth_counts": {
+    "score_nonpositive": 1410
+  },
+  "provenance": {
+    "weights_sha256": "2c481f376b5431bc8376f024052b49781c974c4a404c1b969ed2271e6ea1588c",
+    "filenames_sha256": "d546ef6e1e3e86d53f7d43f7edc719a061c36329cf92853ee120f9f37519f302",
+    "raw_image_annotation_sha256": "f474173908989281067836e5b738acee66833edf16cebf08c71ec78f392cb669",
+    "filenames_digest_definition": "SHA-256 of sorted evaluated basenames, each followed by newline"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "variant": "pconv",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 137.6,
+  "metrics": {
+    "metrics/precision(B)": 0.18641846107464782,
+    "metrics/recall(B)": 0.12325447118470415,
+    "metrics/mAP50(B)": 0.0869775584889491,
+    "metrics/mAP50-95(B)": 0.03947341536004981
+  }
+}

@@ -13,8 +13,7 @@ The repository contains two experiment generations:
   active in the original course model, plus ablations and a matched random-filter
   control.
 - The six-arm `module_extension` study compares five additional efficient-module interventions with
-  a freshly trained baseline. It is currently **in progress**; no extension
-  metrics are reported yet.
+  a freshly trained baseline across three model seeds. All 18 runs are complete.
 
 Implementation details for the extension modules are documented in
 [NEW_MODULES.md](docs/NEW_MODULES.md). Source attribution and licenses are recorded
@@ -32,7 +31,7 @@ train, validation, and test-dev; test-dev was not used for training, checkpoint
 selection, or reported metrics. Dataset provenance is stored in
 [source_provenance.json](results/data/source_provenance.json).
 
-AP values below are percentages. The preregistered primary metric is validation
+AP values below are percentages. The prespecified primary metric is validation
 AP50-95.
 
 | Pilot arm | AP50 | AP50-95 | Parameters |
@@ -121,29 +120,132 @@ normalized fixed random bank with identical shape provides the necessary control
 Because this is a correction, the detector experiment does not reproduce the
 historical MNIST checkpoint's actual computation.
 
-## Module extension study: in progress
+## Completed module extension study
 
-The planned matrix contains six arms: `baseline`, `ghostconv`, `pconv`, `star`,
-`wtconv`, and `lsconv`. Every arm is being trained from scratch for 10 epochs on
-the same 2,048 training images and 548 validation images, at image size 512 and
-batch size 16, using seeds 179, 2026, and 3407. The baseline is rerun under the new
-code rather than copied from the pilot, because code identity is part of the
-experimental protocol.
+The prespecified matrix contains six arms: `baseline`, `ghostconv`, `pconv`,
+`star`, `wtconv`, and `lsconv`. All 18 runs completed: each arm was trained from
+scratch for 10 epochs at image size 512 and batch size 16, using model/training
+seeds 179, 2026, and 3407. Every run used the same 2,048-image training subset,
+selected once during data preparation with dataset-selection seed 179, and all
+548 validation images. Changing a model seed did not resample the dataset.
 
-| Extension arm | Seeds completed | AP50-95 mean ± sample SD | Status |
-| --- | ---: | ---: | --- |
-| Baseline | — | — | In progress |
-| GhostConv | — | — | In progress |
-| PConv / FasterBlock | — | — | In progress |
-| StarBlock | — | — | In progress |
-| WTConv | — | — | In progress |
-| LSConv (large-small convolution) | — | — | In progress |
+AP values are percentages; `±` is the sample standard deviation across the three
+model seeds. The paired delta subtracts the freshly trained baseline with the same
+seed and is measured in percentage points.
 
-No placeholder metric should be interpreted as a result. This table will be filled
-only from completed, fingerprint-validated records in `results/module_extension/`.
-With three seeds, the report will show the sample standard deviation as a compact
-description of run-to-run variation. Three observations are too few to support a
-reliable normal-theory 95% confidence interval, so SD must not be presented as one.
+The added operators come from GhostNet (CVPR 2020), FasterNet (CVPR 2023),
+StarNet (CVPR 2024), WTConv (ECCV 2024), and LSNet (CVPR 2025). These are
+explicit detector adaptations, not reproductions of their full published networks.
+The [research record](docs/NEW_MODULES.md) links their papers and explains why
+other candidates, including a CVPR 2026 architecture, were excluded.
+
+| Extension arm | AP50 mean ± SD | AP50-95 mean ± SD | Paired ΔAP50-95 mean ± SD | Parameters | Reduction vs baseline |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Baseline | 9.540 ± 0.288 | 4.431 ± 0.149 | — | 3.013M | — |
+| GhostConv downsampling | 8.703 ± 0.260 | 3.975 ± 0.175 | -0.457 ± 0.124 | 2.823M | 6.3% |
+| PConv / FasterBlock | 8.772 ± 0.096 | 3.974 ± 0.087 | -0.457 ± 0.084 | 2.655M | 11.9% |
+| StarBlock | 9.219 ± 0.128 | 4.200 ± 0.056 | -0.232 ± 0.195 | 2.888M | 4.1% |
+| WTConv / WTBlock | 9.212 ± 0.146 | 4.192 ± 0.057 | -0.240 ± 0.120 | 2.715M | 9.9% |
+| LSConv (large-small convolution) | 9.154 ± 0.058 | 4.208 ± 0.005 | -0.224 ± 0.147 | 2.578M | 14.4% |
+
+All five paired deltas were negative at every seed. The per-seed AP50-95 deltas
+were -0.60/-0.38/-0.39 for GhostConv, -0.52/-0.48/-0.36 for PConv,
+-0.24/-0.42/-0.03 for StarBlock, -0.32/-0.30/-0.10 for WTConv, and
+-0.27/-0.34/-0.06 for LSConv at seeds 179/2026/3407. Thus none of the additional
+interventions exceeded the matched baseline under this short training budget.
+LSConv had the highest mean AP50-95 among the five interventions and the largest
+parameter reduction, while StarBlock had the highest mean AP50 among them. These
+descriptions do not establish a converged ranking. LSConv's nominal AP50-95 lead
+over StarBlock and WTConv was less than 0.016 percentage points, far too small to
+support a meaningful ordering or stability claim from three seeds.
+
+| Extension arm | Accounted GFLOPs | Validator inference mean ± SD (ms/image) |
+| --- | ---: | ---: |
+| Baseline | 5.179 | 0.274 ± 0.021 |
+| GhostConv downsampling | 4.902 | 0.317 ± 0.063 |
+| PConv / FasterBlock | 4.616 | 0.287 ± 0.043 |
+| StarBlock | 5.011 | 0.269 ± 0.029 |
+| WTConv / WTBlock | 4.648 | 0.359 ± 0.061 |
+| LSConv (large-small convolution) | 4.508 | 0.538 ± 0.245 |
+
+The accounted GFLOPs use each run's shared method: convolution and linear MACs
+multiplied by two, plus fixed Haar analysis/synthesis and LSConv dynamic spatial
+MACs. They exclude normalization, pooling, activation, elementwise gates and
+scales, decoding, and NMS, so they are not total hardware FLOPs. Inference time is
+the per-image inference-stage time reported by the batched Ultralytics validator
+in the recorded RTX 5090 D and software environment. It is not isolated
+single-image end-to-end latency or a deployment benchmark. The result illustrates
+that lower accounted arithmetic did not guarantee lower measured time: LSConv had
+the fewest accounted GFLOPs but the highest mean validator inference time, consistent
+with the memory-heavy standard-PyTorch `unfold` implementation.
+Timing SD describes variation between the three validator runs, not variation
+between individual images or repeated controlled deployment measurements.
+
+Fourteen of 18 runs selected epoch 10; baseline seed 3407, StarBlock seed 179,
+WTConv seed 2026, and LSConv seed 2026 selected epoch 9. This concentration at the
+budget boundary reinforces that the study measures early learning rather than
+convergence. The comparatively small across-seed AP50-95 SD for LSConv,
+StarBlock, and WTConv is descriptive across only three observations and is not a
+95% confidence interval. Because all runs use one fixed subset, these SDs reflect
+only training variation from initialization and randomized training operations;
+they do not capture dataset-resampling or population-generalization uncertainty.
+
+The baseline was rerun under the extension code. No archived checkpoint
+was used for training. As a deterministic regression check, the fresh seed-179
+baseline reproduced the archived pilot seed-179 metrics exactly, matched the data
+fingerprint and parameter count, and matched all 355 checkpoint state tensors
+exactly despite the changed source-code fingerprint. See the
+[baseline regression record](results/module_extension/baseline_regression.json).
+
+The four C2f-based arms are aligned in placement: PConv, StarBlock, WTBlock, and
+LSConv replace internal units while preserving the C2f outer projections and
+depths at backbone layers 4, 6, and 8. Their internal FFNs, gates, normalization,
+capacity, and residual paths still differ. GhostConv changes stride-2 downsampling
+convolutions at layers 1, 3, 5, and 7, so its placement and wrapper are not matched
+to the other four. The results compare these complete detector interventions and
+cannot attribute differences solely to partial convolution, star multiplication,
+wavelets, or dynamic aggregation.
+
+Full numerical evidence is available in the extension
+[report](results/module_extension/REPORT.md),
+[summary CSV](results/module_extension/summary.csv),
+[verification record](results/module_extension/verification.json), and
+[comparison](assets/module_extension/comparison.png),
+[efficiency](assets/module_extension/efficiency.png), and
+[paired-delta](assets/module_extension/paired_deltas.png) figures.
+
+![Three-seed module comparison](assets/module_extension/comparison.png)
+
+![Same-seed AP50-95 changes relative to the baseline](assets/module_extension/paired_deltas.png)
+
+All 18 checkpoints were also evaluated on the same 548 raw validation images
+for occlusion and size diagnostics. Of 38,759 eligible ground-truth boxes,
+26,575 (68.6%) have clipped raw-image area below 32² pixels. Baseline recall
+was 13.54% for these small objects, 52.79% for medium objects, and 72.57% for
+large objects. By natural occlusion level, baseline recall was 36.19% without
+occlusion, 20.44% with partial occlusion, and 9.84% with heavy occlusion.
+These are three-seed means at confidence 0.05, NMS IoU 0.5, and class-aware
+one-to-one matching IoU 0.5. They are ground-truth recall diagnostics, not
+AP by size or official challenge metrics; size is measured before input resizing.
+
+Some diagnostic slices improved slightly while overall AP declined. StarBlock's
+small-object recall was 13.79%, versus the baseline's 13.54%; GhostConv's
+heavy-occlusion recall was 10.19%, versus 9.84%. Neither observation establishes
+an overall improvement or a specific causal benefit for occlusion handling.
+Recall at one confidence threshold does not summarize precision, confidence
+ranking, or localization across AP thresholds, and size and occlusion are not
+independently controlled here.
+
+![Recall grouped by clipped raw-image object size](assets/module_extension/size_recall.png)
+
+The [occlusion plot](assets/module_extension/occlusion_recall.png),
+[learning curves](assets/module_extension/learning_curves.png), and
+[per-class AP plot](assets/module_extension/per_class_ap.png) provide the remaining
+diagnostics. [Qualitative predictions](assets/module_extension/predictions.png)
+compare all six arms at the fixed model seed 179 on the same three images,
+selected independently of predictions. The
+[selection record](results/module_extension/selection.json) and
+[figure metadata](assets/module_extension/predictions.json) record this choice.
 
 ## Reproducing the experiments
 
@@ -234,6 +336,14 @@ Gabor result could easily have been overinterpreted. Likewise, module comparison
 need aligned placement and wrappers before architectural names can explain an
 observed difference. Longer training, more seeds, a held-out evaluation protocol,
 and controlled insertion points are required before making performance claims.
+
+The extension adds a practical lesson: fewer parameters and fewer counted
+operations are useful resource measurements, but neither guarantees improved
+detection or lower runtime. Small objects and heavily occluded objects remain
+weak points across all six arms. A follow-up should first test longer training
+on all 6,471 training images, then separately control input resolution or feature
+stride, insertion placement, and capacity. Deployment timing should be measured
+in its own warmed-up, repeated benchmark rather than inferred from FLOP counts.
 
 The code is distributed under AGPL-3.0. VisDrone images and annotations retain
 their original dataset terms and are not bundled in this repository.

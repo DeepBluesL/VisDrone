@@ -1,0 +1,13 @@
+{
+  "variant": "baseline",
+  "seed": 2026,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 138.1,
+  "metrics": {
+    "metrics/precision(B)": 0.28989944070349677,
+    "metrics/recall(B)": 0.13143732167349428,
+    "metrics/mAP50(B)": 0.09763034289252717,
+    "metrics/mAP50-95(B)": 0.045566764567031195
+  }
+}

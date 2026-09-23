@@ -1,0 +1,13 @@
+{
+  "variant": "wtconv",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 146.0,
+  "metrics": {
+    "metrics/precision(B)": 0.1530063718523126,
+    "metrics/recall(B)": 0.12914207066779473,
+    "metrics/mAP50(B)": 0.09069595516108073,
+    "metrics/mAP50-95(B)": 0.04153726635354912
+  }
+}

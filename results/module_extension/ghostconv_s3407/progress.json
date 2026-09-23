@@ -1,0 +1,13 @@
+{
+  "variant": "ghostconv",
+  "seed": 3407,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 141.5,
+  "metrics": {
+    "metrics/precision(B)": 0.1801616574472774,
+    "metrics/recall(B)": 0.12112314996733509,
+    "metrics/mAP50(B)": 0.08586222018180709,
+    "metrics/mAP50-95(B)": 0.03876161317813881
+  }
+}

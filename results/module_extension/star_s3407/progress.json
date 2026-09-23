@@ -1,0 +1,13 @@
+{
+  "variant": "star",
+  "seed": 3407,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 142.9,
+  "metrics": {
+    "metrics/precision(B)": 0.1764917700865431,
+    "metrics/recall(B)": 0.12662941173185138,
+    "metrics/mAP50(B)": 0.09334439031700854,
+    "metrics/mAP50-95(B)": 0.042349369334481954
+  }
+}

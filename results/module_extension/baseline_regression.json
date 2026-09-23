@@ -1,0 +1,18 @@
+{
+  "seed": 179,
+  "comparison": "Archived pilot vs freshly retrained extension baseline; no checkpoint was reused for training.",
+  "metrics_match_exactly": true,
+  "parameter_count_matches": true,
+  "data_fingerprint_matches": true,
+  "state_tensor_count": 355,
+  "different_state_tensors": [],
+  "all_checkpoint_state_tensors_match_exactly": true,
+  "source_training_code_sha256": {
+    "pilot": "4a228554ca42d5e8dad6414bc91cdfb98c9f5845ccbb6aafdf6d19da64aa5046",
+    "module_extension": "8e6fd6d241f3cba56bafe50bfe70d1ee7109252dacff52cd56b374d191d47b65"
+  },
+  "checkpoint_sha256": {
+    "pilot": "1a54fee9dde820d8136e636b247a7746fa1d6874e7cda187a900a3e1da450dd7",
+    "module_extension": "9d4c389c5e4c84492cade72dc633b7071ba5fed5538672ec7204d9d40f8a7d69"
+  }
+}

@@ -357,7 +357,14 @@ def plot_comparison(
         _errorbar_for_bar(ax, position + width / 2, row["ap50_95_percent_mean"], row["ap50_95_percent_std"])
     ax.set_xticks(x, [row["display_name"] for row in selected], rotation=18, ha="right")
     _style_axis(ax, "Average precision (%)")
-    ax.set_title("Baseline vs. single-module interventions")
+    run_counts = sorted({int(row["run_count"]) for row in selected})
+    if len(run_counts) == 1 and run_counts[0] > 1:
+        uncertainty_label = f"{run_counts[0]} seeds; mean ± sample SD"
+    elif run_counts == [1]:
+        uncertainty_label = "one available seed"
+    else:
+        uncertainty_label = "available seeds; mean ± sample SD where estimable"
+    ax.set_title(f"Baseline vs. single-module interventions ({uncertainty_label})")
     ax.legend(frameon=False)
     _save_figure(fig, path)
     return True
@@ -433,7 +440,7 @@ def plot_learning_curves(
         fig, axis = plt.subplots(figsize=(11.5, 6.2))
         axes = [axis]
         panel_orders = (tuple(order),)
-        titles = ("Validation learning curves across seeds",)
+        titles = ("Validation learning curves for available seeds",)
     palette = plt.get_cmap("tab10")
     drew_any = False
     for ax, order, title in zip(axes, panel_orders, titles):
@@ -503,16 +510,23 @@ def _aggregate_per_class(runs: Sequence[dict[str, Any]]) -> dict[str, dict[int, 
     }
 
 
-def plot_per_class(runs: Sequence[dict[str, Any]], path: Path) -> bool:
+def plot_per_class(runs: Sequence[dict[str, Any]], path: Path, order: Sequence[str] | None = None) -> bool:
     values = _aggregate_per_class(runs)
     variants = [name for name in VARIANT_ORDER if name in values]
     variants.extend(sorted(set(values) - set(variants)))
+    if order:
+        positions = {name: index for index, name in enumerate(order)}
+        variants.sort(key=lambda name: (positions.get(name, len(positions)), name))
     if not variants:
         return False
     matrix = [[values[variant].get(index, float("nan")) for index in range(10)] for variant in variants]
+    finite_values = [value for row in matrix for value in row if math.isfinite(value)]
+    if not finite_values:
+        return False
+    color_maximum = min(100.0, max(10.0, math.ceil(max(finite_values) / 5.0) * 5.0))
     height = max(5.0, 0.42 * len(variants) + 2.2)
     fig, ax = plt.subplots(figsize=(13.5, height))
-    image = ax.imshow(matrix, aspect="auto", cmap="viridis", vmin=0, vmax=100)
+    image = ax.imshow(matrix, aspect="auto", cmap="viridis", vmin=0, vmax=color_maximum)
     ax.set_xticks(range(10), CLASS_NAMES, rotation=28, ha="right")
     ax.set_yticks(range(len(variants)), [DISPLAY_NAMES.get(name, name) for name in variants])
     ax.set_title("Per-class validation AP50–95 (%)")
@@ -557,6 +571,9 @@ def plot_efficiency(rows: Sequence[dict[str, Any]], path: Path) -> bool:
             x = row[key] / 1e6 if key == "parameters_mean" else row[key]
             y = row["ap50_95_percent_mean"]
             color = plt.get_cmap("tab10")(index % 10)
+            if row.get("ap50_95_percent_std") is not None:
+                ax.errorbar(x, y, yerr=row["ap50_95_percent_std"], fmt="none",
+                            color=color, alpha=0.7, capsize=3, linewidth=1.0, zorder=1)
             point = ax.scatter(x, y, s=48, color=color, edgecolor="white", linewidth=0.6)
             offset = label_offsets[key].get(row["variant"], (7, 8))
             ax.annotate(
@@ -588,8 +605,10 @@ def plot_efficiency(rows: Sequence[dict[str, Any]], path: Path) -> bool:
                 legend_handles.append(point)
         ax.set_xlabel(xlabel)
         _style_axis(ax, "AP50–95 (%)")
-    axes[0].set_title("Accuracy vs. model size")
-    axes[1].set_title("Accuracy vs. computation")
+    with_std = any(row.get("ap50_95_percent_std") is not None for row in usable)
+    suffix = " (mean ± sample SD)" if with_std else ""
+    axes[0].set_title("Accuracy vs. model size" + suffix)
+    axes[1].set_title("Accuracy vs. computation" + suffix)
     fig.legend(
         legend_handles,
         [f"{index + 1}. {row['display_name']}" for index, row in enumerate(usable)],
@@ -633,7 +652,7 @@ def plot_paired_deltas(
                 color=seed_colors[seed],
                 edgecolor="white",
                 linewidth=0.6,
-                zorder=3,
+                zorder=5,
             )
         standard_deviation = item.get("std_percent_points")
         ax.errorbar(
@@ -696,6 +715,7 @@ def load_occlusion_results(
             settings = payload["settings"]
             provenance = payload["provenance"]
             occlusion = payload["metrics"]["occlusion"]
+            size = payload["metrics"].get("size")
             checkpoint_hash = run.get("checkpoint_sha256")
             if not checkpoint_hash:
                 raise ValueError("run record has no checkpoint_sha256")
@@ -740,6 +760,31 @@ def load_occlusion_results(
                     "match_count": matched,
                     "recall": recall_value,
                 }
+            size_strata = None
+            if size is not None:
+                size_strata = {}
+                for label in ("small", "medium", "large"):
+                    item = size[label]
+                    total = int(item["total"])
+                    matched = int(item["match_count"])
+                    if total < 0 or matched < 0 or matched > total:
+                        raise ValueError(f"invalid counts for size {label}")
+                    recall = item.get("recall")
+                    if total:
+                        recall_value = _finite_number(recall, f"{path}:size.{label}.recall")
+                        if not math.isclose(
+                            recall_value, matched / total, rel_tol=1e-9, abs_tol=1e-12
+                        ):
+                            raise ValueError(f"recall/count mismatch for size {label}")
+                    elif recall is not None:
+                        raise ValueError(f"non-null recall with zero count for size {label}")
+                    else:
+                        recall_value = None
+                    size_strata[label] = {
+                        "total": total,
+                        "match_count": matched,
+                        "recall": recall_value,
+                    }
             record = {
                 "run_id": run["_run_id"],
                 "variant": run["variant"],
@@ -749,6 +794,7 @@ def load_occlusion_results(
                 "settings": settings,
                 "provenance": provenance,
                 "strata": strata,
+                "size_strata": size_strata,
             }
             records.append(record)
         except (KeyError, TypeError, ValueError, OSError, json.JSONDecodeError) as exc:
@@ -782,6 +828,30 @@ def load_occlusion_results(
                 "occlusion diagnostics are not comparable for: "
                 + ", ".join(mismatches)
             )
+        size_records = [record for record in records if record["size_strata"] is not None]
+        if size_records:
+            size_comparable = {
+                "size definition": {
+                    str(record["settings"].get("size_bins")) for record in size_records
+                },
+                "size GT counts": {
+                    json.dumps(
+                        {
+                            label: record["size_strata"][label]["total"]
+                            for label in ("small", "medium", "large")
+                        },
+                        sort_keys=True,
+                    )
+                    for record in size_records
+                },
+            }
+            size_mismatches = [
+                name for name, values in size_comparable.items() if len(values) > 1
+            ]
+            if size_mismatches:
+                raise ValueError(
+                    "size diagnostics are not comparable for: " + ", ".join(size_mismatches)
+                )
     records.sort(
         key=lambda record: (
             _variant_sort_key(record["variant"]),
@@ -821,6 +891,71 @@ def aggregate_occlusion(
             row[f"occlusion_{level}_recall_percent_std"] = std
         rows.append(row)
     return rows
+
+
+def aggregate_size_recall(
+    records: Sequence[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for record in records:
+        if record.get("size_strata") is not None:
+            grouped[record["variant"]].append(record)
+    rows = []
+    for variant in sorted(grouped, key=_variant_sort_key):
+        group = grouped[variant]
+        row: dict[str, Any] = {
+            "variant": variant,
+            "display_name": DISPLAY_NAMES.get(variant, variant),
+            "run_count": len(group),
+            "seeds": sorted(record["seed"] for record in group),
+        }
+        for label in ("small", "medium", "large"):
+            values = [
+                record["size_strata"][label]["recall"] * 100.0
+                for record in group
+                if record["size_strata"][label]["recall"] is not None
+            ]
+            mean, std = _mean_std(values) if values else (None, None)
+            row[f"size_{label}_count"] = group[0]["size_strata"][label]["total"]
+            row[f"size_{label}_recall_percent_mean"] = mean
+            row[f"size_{label}_recall_percent_std"] = std
+        rows.append(row)
+    return rows
+
+
+def plot_size_recall(rows: Sequence[dict[str, Any]], path: Path) -> bool:
+    if not rows or not any(
+        row.get(f"size_{label}_recall_percent_mean") is not None
+        for row in rows for label in ("small", "medium", "large")
+    ):
+        return False
+    x = list(range(len(rows)))
+    width = 0.24
+    fig, ax = plt.subplots(figsize=(max(10.5, len(rows) * 0.9 + 3.5), 5.8))
+    for label, offset, color in zip(
+        ("small", "medium", "large"), (-width, 0.0, width),
+        ("#4C78A8", "#F2CF5B", "#E45756"),
+    ):
+        count = rows[0][f"size_{label}_count"]
+        drew_label = False
+        for position, row in zip(x, rows):
+            value = row[f"size_{label}_recall_percent_mean"]
+            if value is None:
+                continue
+            ax.bar(
+                position + offset, value, width, color=color,
+                label=f"{label.title()} (GT n={count})" if not drew_label else None,
+            )
+            drew_label = True
+            _errorbar_for_bar(
+                ax, position + offset, value, row[f"size_{label}_recall_percent_std"]
+            )
+    ax.set_xticks(x, [row["display_name"] for row in rows], rotation=25, ha="right")
+    _style_axis(ax, "Class-aware ground-truth recall (%)")
+    ax.set_title("Recall by clipped raw-image box area (confidence 0.05, match IoU 0.50)")
+    ax.legend(frameon=False)
+    _save_figure(fig, path)
+    return True
 
 
 def plot_occlusion_recall(
@@ -913,7 +1048,11 @@ def _fmt(value: Any, digits: int = 3) -> str:
 def _metric_cell(row: dict[str, Any], metric: str) -> str:
     mean = row[f"{metric}_percent_mean"]
     std = row[f"{metric}_percent_std"]
-    return f"{mean:.2f} ± {std:.2f}" if std is not None else f"{mean:.2f}"
+    if std is None:
+        return f"{mean:.2f}"
+    if 0.0 < abs(std) < 0.005:
+        return f"{mean:.2f} ± <0.005"
+    return f"{mean:.2f} ± {std:.2f}"
 
 
 def protocol_run_ids(protocol: dict[str, Any] | None) -> list[str]:
@@ -965,6 +1104,7 @@ def build_markdown_report(
     rows: Sequence[dict[str, Any]],
     manifest: dict[str, Any] | None,
     occlusion_rows: Sequence[dict[str, Any]],
+    size_rows: Sequence[dict[str, Any]],
     generated_plots: Sequence[str],
     notices: Sequence[str],
     protocol: dict[str, Any] | None = None,
@@ -1128,6 +1268,35 @@ def build_markdown_report(
                 + " |"
             )
 
+    if size_rows:
+        lines.extend(
+            [
+                "",
+                "## Recall by object size",
+                "",
+                "Sizes use each eligible ground-truth box area after clipping to the raw VisDrone image: small < 32² pixels, medium 32² ≤ area < 96², and large ≥ 96². Values are class-aware ground-truth recall at confidence 0.05, NMS IoU 0.50, and matching IoU 0.50. They are not AP_S/AP_M/AP_L and do not use box sizes on the network's 512-pixel input.",
+                "",
+                "| Variant | Diagnostic runs | Seeds | Small recall (%) | Medium recall (%) | Large recall (%) |",
+                "|---|---:|---|---:|---:|---:|",
+            ]
+        )
+        for row in size_rows:
+            cells = []
+            for label in ("small", "medium", "large"):
+                mean = row[f"size_{label}_recall_percent_mean"]
+                std = row[f"size_{label}_recall_percent_std"]
+                count = row[f"size_{label}_count"]
+                value = "—" if mean is None else (
+                    f"{mean:.2f} ± {std:.2f}" if std is not None else f"{mean:.2f}"
+                )
+                cells.append(f"{value} (GT n={count})")
+            lines.append(
+                f"| {row['display_name']} | {row['run_count']} | "
+                f"{', '.join(str(seed) for seed in row['seeds'])} | "
+                + " | ".join(cells)
+                + " |"
+            )
+
     if generated_plots:
         lines.extend(["", "## Figures", ""])
         captions = {
@@ -1137,6 +1306,7 @@ def build_markdown_report(
             "per_class_ap.png": "Per-class AP50–95",
             "efficiency.png": "Accuracy versus parameters and accounted computation",
             "paired_deltas.png": "Same-seed AP50–95 deltas to baseline",
+            "size_recall.png": "Recall by clipped raw-image object size",
             "occlusion_recall.png": "Natural-occlusion recall",
         }
         for filename in generated_plots:
@@ -1182,6 +1352,7 @@ def generate_report(root: Path, suite: str) -> int:
 
     rows = aggregate_runs(runs)
     occlusion_rows = aggregate_occlusion(occlusion_records)
+    size_rows = aggregate_size_recall(occlusion_records)
     manifest = _data_manifest_metadata(
         suite_dir / "data_snapshot" / "preparation_manifest.json", root
     )
@@ -1203,7 +1374,17 @@ def generate_report(root: Path, suite: str) -> int:
     )
     if protocol_variants:
         protocol_index = {name: index for index, name in enumerate(protocol_variants)}
-        rows.sort(key=lambda row: (protocol_index.get(row["variant"], len(protocol_index)), row["variant"]))
+        protocol_seeds = [int(value) for value in protocol["content"].get("seeds") or []]
+        seed_index = {seed: index for index, seed in enumerate(protocol_seeds)}
+        runs.sort(
+            key=lambda run: (
+                seed_index.get(int(run["seed"]), len(seed_index)),
+                protocol_index.get(run["variant"], len(protocol_index)),
+                run["_run_id"],
+            )
+        )
+        for collection in (rows, occlusion_rows, size_rows):
+            collection.sort(key=lambda row: (protocol_index.get(row["variant"], len(protocol_index)), row["variant"]))
     extension_suite = set(protocol_variants) == set(EXTENSION_ORDER)
     comparison_order = protocol_variants if extension_suite else SINGLE_ORDER
     learning_order = protocol_variants if extension_suite else None
@@ -1222,7 +1403,7 @@ def generate_report(root: Path, suite: str) -> int:
         ("comparison.png", lambda path: plot_comparison(rows, path, comparison_order)),
         ("learning_curves.png", lambda path: plot_learning_curves(runs, path, learning_order)),
         ("ablation.png", lambda path: False if extension_suite else plot_ablation(rows, path)),
-        ("per_class_ap.png", lambda path: plot_per_class(runs, path)),
+        ("per_class_ap.png", lambda path: plot_per_class(runs, path, protocol_variants)),
         ("efficiency.png", lambda path: plot_efficiency(rows, path)),
         (
             "paired_deltas.png",
@@ -1232,6 +1413,7 @@ def generate_report(root: Path, suite: str) -> int:
             "occlusion_recall.png",
             lambda path: plot_occlusion_recall(occlusion_rows, path),
         ),
+        ("size_recall.png", lambda path: plot_size_recall(size_rows, path)),
     )
     generated_plots: list[str] = []
     for filename, make in plotters:
@@ -1280,6 +1462,16 @@ def generate_report(root: Path, suite: str) -> int:
                 for record in occlusion_records
             ],
         },
+        "size_recall_diagnostic": {
+            "units": "recall percent",
+            "box_area_frame": "clipped raw-image pixels",
+            "size_bins": "small < 32^2; medium 32^2 to < 96^2; large >= 96^2",
+            "confidence_threshold": 0.05,
+            "nms_iou_threshold": 0.5,
+            "matching_iou_threshold": 0.5,
+            "not_coco_ap_by_size": True,
+            "aggregates": size_rows,
+        },
         "source_metrics": [
             {
                 "run_id": run["_run_id"],
@@ -1306,6 +1498,7 @@ def generate_report(root: Path, suite: str) -> int:
         rows,
         manifest,
         occlusion_rows,
+        size_rows,
         generated_plots,
         notices,
         protocol,

@@ -17,6 +17,7 @@ os.environ.setdefault("YOLO_CONFIG_DIR", str(ROOT / ".runtime" / "ultralytics"))
 os.environ.setdefault("MPLCONFIGDIR", str(ROOT / ".runtime" / "matplotlib"))
 
 from scripts.verify_results import verify_suite
+from scripts.diagnostic_provenance import raw_inputs_sha256
 
 
 CONFIDENCE = 0.05
@@ -24,6 +25,11 @@ NMS_IOU = 0.5
 MATCH_IOU = 0.5
 BATCH = 16
 MAX_DET = 500
+DIAGNOSTIC_VERSION = "visdrone_raw_recall_v2"
+ELIGIBLE_GT = "score > 0, source class 1..10, valid after clipping"
+SMALL_DEFINITION = "clipped raw-image area < 32^2 pixels (COCO convention)"
+SIZE_BINS = "small < 32^2; medium 32^2 to < 96^2; large >= 96^2 raw pixels"
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp"}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -50,6 +56,46 @@ def _same_number(actual: Any, expected: float) -> bool:
         return False
 
 
+def _valid_recall_record(item: Any) -> bool:
+    try:
+        total, matched = int(item["total"]), int(item["match_count"])
+        recall = item.get("recall")
+        if total < 0 or matched < 0 or matched > total:
+            return False
+        if total == 0:
+            return recall is None
+        return _same_number(recall, matched / total)
+    except (KeyError, TypeError, ValueError):
+        return False
+
+
+def valid_diagnostic_metrics(metrics: Any) -> bool:
+    if not isinstance(metrics, dict) or not _valid_recall_record(metrics.get("overall")):
+        return False
+    required = {
+        "occlusion": ("0", "1", "2"),
+        "truncation": ("0", "1", "2"),
+        "size": ("small", "medium", "large"),
+    }
+    overall_total = int(metrics["overall"]["total"])
+    overall_matched = int(metrics["overall"]["match_count"])
+    for group, labels in required.items():
+        values = metrics.get(group)
+        if not isinstance(values, dict) or any(not _valid_recall_record(values.get(label)) for label in labels):
+            return False
+        if sum(int(values[label]["total"]) for label in labels) != overall_total:
+            return False
+        if sum(int(values[label]["match_count"]) for label in labels) != overall_matched:
+            return False
+    classes = metrics.get("class")
+    if not isinstance(classes, dict) or not classes or any(not _valid_recall_record(item) for item in classes.values()):
+        return False
+    return (
+        sum(int(item["total"]) for item in classes.values()) == overall_total
+        and sum(int(item["match_count"]) for item in classes.values()) == overall_matched
+    )
+
+
 def reusable_occlusion(
     path: Path,
     *,
@@ -59,6 +105,7 @@ def reusable_occlusion(
     weights: Path,
     imgsz: int,
     device: str,
+    raw_inputs_hash: str,
 ) -> bool:
     """Return true only when an existing diagnostic exactly matches this invocation."""
     if not path.is_file():
@@ -69,7 +116,10 @@ def reusable_occlusion(
         provenance = payload["provenance"]
         return all(
             (
+                payload.get("schema_version") == 2,
+                payload.get("diagnostic_version") == DIAGNOSTIC_VERSION,
                 provenance.get("weights_sha256") == checkpoint_sha256,
+                provenance.get("raw_image_annotation_sha256") == raw_inputs_hash,
                 int(settings.get("source_image_count")) == image_count,
                 int(settings.get("evaluated_image_count")) == image_count,
                 settings.get("is_subset_smoke_run") is False,
@@ -83,6 +133,10 @@ def reusable_occlusion(
                 _same_number(settings.get("confidence_threshold"), CONFIDENCE),
                 _same_number(settings.get("nms_iou_threshold"), NMS_IOU),
                 _same_number(settings.get("matching_iou_threshold"), MATCH_IOU),
+                settings.get("eligible_ground_truth") == ELIGIBLE_GT,
+                settings.get("small_object_definition") == SMALL_DEFINITION,
+                settings.get("size_bins") == SIZE_BINS,
+                valid_diagnostic_metrics(payload.get("metrics")),
             )
         )
     except (KeyError, TypeError, ValueError, OSError):
@@ -137,6 +191,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         raise FileNotFoundError(
             f"raw validation root must contain images/ and annotations/: {raw_val_root}"
         )
+    raw_images = sorted(
+        path for path in (raw_val_root / "images").iterdir()
+        if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES
+    )
+    if len(raw_images) != val_count:
+        raise ValueError(f"raw validation image count is {len(raw_images)}, expected {val_count}")
+    raw_inputs_hash = raw_inputs_sha256(raw_val_root, raw_images)
 
     verification, exit_code = verify_suite(
         args.suite,
@@ -179,6 +240,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             weights=weights,
             imgsz=imgsz,
             device=str(args.device),
+            raw_inputs_hash=raw_inputs_hash,
         ):
             print(f"SKIP verified occlusion {run_id}", flush=True)
         else:
@@ -204,6 +266,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             weights=weights,
             imgsz=imgsz,
             device=str(args.device),
+            raw_inputs_hash=raw_inputs_hash,
         ):
             raise RuntimeError(f"occlusion output failed postcondition checks: {run_id}")
         completed_diagnostics += 1
@@ -239,8 +302,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         "occlusion_evaluated_run_count": completed_diagnostics,
         "expected_run_count": len(expected_ids),
     }
-    _atomic_json(suite_dir / "selection.json", selection)
     _run("report.py", "--suite", args.suite)
+    summary = _read_json(suite_dir / "summary.json")
+    diagnostic = summary.get("occlusion_diagnostic") or {}
+    sources = diagnostic.get("sources") or []
+    aggregates = diagnostic.get("aggregates") or []
+    if len(sources) != len(expected_ids) or sum(int(row.get("run_count", 0)) for row in aggregates) != len(expected_ids):
+        raise RuntimeError("final report did not retain every expected occlusion diagnostic")
+    size_aggregates = (summary.get("size_recall_diagnostic") or {}).get("aggregates") or []
+    if sum(int(row.get("run_count", 0)) for row in size_aggregates) != len(expected_ids):
+        raise RuntimeError("final report did not retain every expected size diagnostic")
+    _atomic_json(suite_dir / "selection.json", selection)
     print("POSTPROCESS COMPLETE " + json.dumps(selection), flush=True)
     return 0
 
