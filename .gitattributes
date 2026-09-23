@@ -8,3 +8,7 @@
 *.pt binary
 *.png binary
 *.jpg binary
+# Evidence hashes refer to exact output bytes, including Windows line endings.
+results/** -text
+assets/** -text
+checkpoints/** -text

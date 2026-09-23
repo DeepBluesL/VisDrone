@@ -248,6 +248,13 @@ def _detections_from_result(result) -> list[Detection]:
     ]
 
 
+def predict_batched(detector, paths, **kwargs):
+    """Bound list inputs explicitly; upstream treats a list as one batch."""
+    batch = int(kwargs["batch"])
+    for start in range(0, len(paths), batch):
+        yield from detector.predict(source=[str(path) for path in paths[start:start + batch]], **kwargs)
+
+
 def evaluate(args: argparse.Namespace) -> dict[str, object]:
     weights = args.weights.resolve()
     data_root = args.data_root.resolve()
@@ -302,8 +309,8 @@ def evaluate(args: argparse.Namespace) -> dict[str, object]:
         }
     )
     detector = YOLO(str(weights))
-    results = detector.predict(
-        source=[str(path) for path in paths],
+    results = predict_batched(
+        detector, paths,
         imgsz=args.imgsz,
         conf=args.conf,
         iou=args.iou,

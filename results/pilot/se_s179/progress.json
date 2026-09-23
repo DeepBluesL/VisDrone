@@ -1,0 +1,13 @@
+{
+  "variant": "se",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 187.0,
+  "metrics": {
+    "metrics/precision(B)": 0.16034299235922106,
+    "metrics/recall(B)": 0.1333262557265337,
+    "metrics/mAP50(B)": 0.09446707926287959,
+    "metrics/mAP50-95(B)": 0.0438557842712649
+  }
+}

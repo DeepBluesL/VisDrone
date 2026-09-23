@@ -1,0 +1,13 @@
+{
+  "variant": "ghost",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 142.4,
+  "metrics": {
+    "metrics/precision(B)": 0.1364633065041285,
+    "metrics/recall(B)": 0.11985918318398717,
+    "metrics/mAP50(B)": 0.08484074508363945,
+    "metrics/mAP50-95(B)": 0.03859082931031213
+  }
+}

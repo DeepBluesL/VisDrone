@@ -1,0 +1,13 @@
+{
+  "variant": "gabor",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 139.6,
+  "metrics": {
+    "metrics/precision(B)": 0.19552761668014626,
+    "metrics/recall(B)": 0.1333633916488441,
+    "metrics/mAP50(B)": 0.10296234181564126,
+    "metrics/mAP50-95(B)": 0.04865834126809303
+  }
+}

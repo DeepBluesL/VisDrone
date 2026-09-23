@@ -1,0 +1,13 @@
+{
+  "variant": "sppf",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 137.5,
+  "metrics": {
+    "metrics/precision(B)": 0.2580148728114659,
+    "metrics/recall(B)": 0.1267231606652818,
+    "metrics/mAP50(B)": 0.09158647586511488,
+    "metrics/mAP50-95(B)": 0.04199583363241008
+  }
+}

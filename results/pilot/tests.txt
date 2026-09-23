@@ -1,0 +1,55 @@
+test_box_is_clipped_to_image_bounds (test_data.AnnotationConversionTests) ... ok
+test_class_eleven_and_unsupported_class_are_dropped (test_data.AnnotationConversionTests) ... ok
+test_ignored_flags_overlap_but_drop_reason_is_exclusive (test_data.AnnotationConversionTests) ... ok
+test_invalid_and_outside_boxes_are_accounted (test_data.AnnotationConversionTests) ... ok
+test_valid_box_maps_class_and_normalizes (test_data.AnnotationConversionTests) ... ok
+test_dataset_yaml_uses_absolute_posix_root (test_data.DatasetPreparationTests) ... ok
+test_prepare_split_preserves_source_and_writes_portable_manifest (test_data.DatasetPreparationTests) ... ok
+test_subset_selection_is_reproducible_and_sorted (test_data.DatasetPreparationTests) ... ok
+test_validates_budget_fingerprints_and_checkpoint (test_evidence.CompletionValidationTests) ... ok
+test_code_fingerprint_ignores_runner_but_tracks_training_sources (test_evidence.FingerprintTests) ... ok
+test_data_fingerprint_tracks_images_and_labels (test_evidence.FingerprintTests) ... ok
+test_environment_identity_has_required_dependencies (test_evidence.FingerprintTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_all_variants_preserve_detection_graph (test_model.DetectorTests) ... ok
+test_checkpoint_selection_uses_only_ap50_95 (test_model.DetectorTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+test_full_model_fusion_preserves_predictions_and_removes_all_bn (test_model.DetectorTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_module_initialization_matches_single_and_full (test_model.DetectorTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_shared_head_weights_and_rng_match_across_arms (test_model.DetectorTests) ... ok
+test_detector_block_shapes_and_gradients (test_modules.BlockTests) ... ok
+test_ghost_rejects_odd_output_channels (test_modules.BlockTests) ... ok
+test_se_supports_channels_below_reduction (test_modules.BlockTests) ... ok
+test_bank_survives_initializer_and_optimizer_step (test_modules.GaborStemTests) ... ok
+test_filter_normalization_and_state_dict_roundtrip (test_modules.GaborStemTests) ... ok
+test_random_seed_is_local_and_modes_differ (test_modules.GaborStemTests) ... ok
+test_shape_fixed_bank_and_projection_gradients (test_modules.GaborStemTests) ... ok
+test_filter_clip_and_raw_area_size (test_occlusion.AnnotationTests) ... ok
+test_matching_is_class_aware_confidence_ordered_and_one_to_one (test_occlusion.MatchingTests) ... ok
+test_prediction_list_inputs_are_bounded_to_requested_batch (test_occlusion.MatchingTests) ... ok
+test_strata_are_aggregated_from_one_global_match_set (test_occlusion.MatchingTests) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 2.061s
+
+OK

@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "recorded_at_utc": "2026-09-23T03:05:19.676918+00:00",
+  "unit_tests": {
+    "command": "python -m unittest discover -s tests -v",
+    "passed": 28,
+    "transcript": "results/pilot/tests.txt",
+    "sha256": "57505f730464071c01b5b9b6727b308e47388c1f564a8a2f43326618d3dfceaf"
+  },
+  "checkpoint_verification": {
+    "passed": 13,
+    "expected": 13,
+    "path": "results/pilot/verification.json",
+    "sha256": "b38dcee2477da5c9e55340ffbb620506eff5dc705123289183d75ba878a77ba9"
+  },
+  "current_training_code_matches_all_runs": true,
+  "training_code_sha256": "4a228554ca42d5e8dad6414bc91cdfb98c9f5845ccbb6aafdf6d19da64aa5046",
+  "environment": {
+    "python": "3.10.13",
+    "packages": {
+      "torch": "2.9.0.dev20250907+cu128",
+      "torchvision": "0.24.0.dev20250907+cu128",
+      "ultralytics": "8.3.195",
+      "numpy": "1.26.4",
+      "Pillow": "11.3.0"
+    }
+  }
+}

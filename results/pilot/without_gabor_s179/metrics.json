@@ -1,0 +1,177 @@
+{
+  "status": "completed",
+  "variant": "without_gabor",
+  "factors": [
+    "c3k2",
+    "ghost",
+    "se",
+    "sppf"
+  ],
+  "seed": 179,
+  "epochs": 10,
+  "imgsz": 512,
+  "batch": 16,
+  "initialization": "from scratch; no pretrained checkpoint",
+  "evaluation_split": "official validation",
+  "evaluation_protocol": "Ultralytics YOLO-converted 10-class AP; not official VisDrone ignore-region evaluation",
+  "checkpoint_selection": "best validation mAP50-95 within fixed epoch budget",
+  "selected_epoch": 10,
+  "metrics": {
+    "metrics/precision(B)": 0.1575786802274975,
+    "metrics/recall(B)": 0.11760914140239005,
+    "metrics/mAP50(B)": 0.0842089261960128,
+    "metrics/mAP50-95(B)": 0.03852698568622462
+  },
+  "per_class": [
+    {
+      "id": 0,
+      "name": "pedestrian",
+      "ap50": 0.05426007101632775,
+      "ap50_95": 0.016861503600816403
+    },
+    {
+      "id": 1,
+      "name": "people",
+      "ap50": 0.0763175892429116,
+      "ap50_95": 0.024297945856958346
+    },
+    {
+      "id": 2,
+      "name": "bicycle",
+      "ap50": 0.007750963778205063,
+      "ap50_95": 0.0021605650238464185
+    },
+    {
+      "id": 3,
+      "name": "car",
+      "ap50": 0.4272179006625847,
+      "ap50_95": 0.22721259460047927
+    },
+    {
+      "id": 4,
+      "name": "van",
+      "ap50": 0.07433792788003477,
+      "ap50_95": 0.04014756560646894
+    },
+    {
+      "id": 5,
+      "name": "truck",
+      "ap50": 0.027501392067279556,
+      "ap50_95": 0.012055285782088873
+    },
+    {
+      "id": 6,
+      "name": "tricycle",
+      "ap50": 0.03020201713739986,
+      "ap50_95": 0.011822616156242676
+    },
+    {
+      "id": 7,
+      "name": "awning-tricycle",
+      "ap50": 0.02066792896018573,
+      "ap50_95": 0.010485715815655603
+    },
+    {
+      "id": 8,
+      "name": "bus",
+      "ap50": 0.028993087906762124,
+      "ap50_95": 0.012272731053937624
+    },
+    {
+      "id": 9,
+      "name": "motor",
+      "ap50": 0.09484038330843696,
+      "ap50_95": 0.027953333365752057
+    }
+  ],
+  "speed_ms": {
+    "preprocess": 0.02806058394054846,
+    "inference": 0.3746934306627404,
+    "loss": 0.0001310219013381343,
+    "postprocess": 3.1434200729968556
+  },
+  "parameters": 2497152,
+  "trainable_parameters": 2497136,
+  "gflops_at_imgsz": 4.301734144,
+  "gflops_method": "Convolution and linear MACs x 2, batch 1, includes fixed Gabor bank; excludes BN, pooling, activation, decode and NMS",
+  "training_and_final_validation_seconds": 202.22496342658997,
+  "peak_cuda_reserved_gb": 5.542772736,
+  "data_yaml_sha256": "f8afdda8102c5da67eabac167cdfda6a3609b33c23d29f38410eaa360f5ae478",
+  "checkpoint_sha256": "070585d5f546058bdf408e7107c0b6610039fca60448de3800d872e7d79f5c95",
+  "data_fingerprint": {
+    "train": {
+      "images": 2048,
+      "image_and_label_sha256": "35691d3decddd9366f16cf90d2877f87472c0fc230f8442fb6951103878a8a3d"
+    },
+    "val": {
+      "images": 548,
+      "image_and_label_sha256": "dcfe7073679ec50496683ebdaf9d25a6c69b515fbee4793c9118147d7c4faae7"
+    }
+  },
+  "training_code_sha256": "4a228554ca42d5e8dad6414bc91cdfb98c9f5845ccbb6aafdf6d19da64aa5046",
+  "environment_fingerprint": {
+    "python": "3.10.13",
+    "packages": {
+      "torch": "2.9.0.dev20250907+cu128",
+      "torchvision": "0.24.0.dev20250907+cu128",
+      "ultralytics": "8.3.195",
+      "numpy": "1.26.4",
+      "Pillow": "11.3.0"
+    }
+  },
+  "environment": {
+    "python": "3.10.13",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "torch": "2.9.0.dev20250907+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 5090 D",
+    "torchvision": "0.24.0.dev20250907+cu128",
+    "ultralytics": "8.3.195",
+    "numpy": "1.26.4",
+    "Pillow": "11.3.0",
+    "matplotlib": "3.10.6"
+  },
+  "training": {
+    "model": "yolov8n.yaml",
+    "epochs": 10,
+    "imgsz": 512,
+    "batch": 16,
+    "workers": 4,
+    "seed": 179,
+    "device": "0",
+    "exist_ok": false,
+    "pretrained": false,
+    "optimizer": "AdamW",
+    "lr0": 0.001,
+    "lrf": 0.1,
+    "weight_decay": 0.0005,
+    "nbs": 16,
+    "momentum": 0.9,
+    "warmup_epochs": 1.0,
+    "cos_lr": true,
+    "patience": 0,
+    "deterministic": true,
+    "amp": false,
+    "cache": false,
+    "plots": true,
+    "save": true,
+    "val": true,
+    "close_mosaic": 0,
+    "mosaic": 0.0,
+    "mixup": 0.0,
+    "copy_paste": 0.0,
+    "degrees": 0.0,
+    "translate": 0.1,
+    "scale": 0.3,
+    "shear": 0.0,
+    "perspective": 0.0,
+    "flipud": 0.0,
+    "fliplr": 0.5,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "max_det": 500,
+    "verbose": false
+  },
+  "run_directory": "runs/pilot/without_gabor_s179_attempt_1790131671962172000"
+}

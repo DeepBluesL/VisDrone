@@ -1,0 +1,13 @@
+{
+  "variant": "without_c3k2",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 146.7,
+  "metrics": {
+    "metrics/precision(B)": 0.19025507404304856,
+    "metrics/recall(B)": 0.12545661723275459,
+    "metrics/mAP50(B)": 0.09082518540803555,
+    "metrics/mAP50-95(B)": 0.0419424407701734
+  }
+}

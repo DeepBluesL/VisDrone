@@ -6,6 +6,7 @@ from scripts.evaluate_occlusion import (
     aggregate_recall,
     match_ground_truths,
     parse_annotations,
+    predict_batched,
 )
 
 
@@ -29,6 +30,20 @@ class AnnotationTests(unittest.TestCase):
 
 
 class MatchingTests(unittest.TestCase):
+    def test_prediction_list_inputs_are_bounded_to_requested_batch(self):
+        class FakeDetector:
+            def __init__(self):
+                self.sizes = []
+
+            def predict(self, source, **kwargs):
+                self.sizes.append(len(source))
+                yield from source
+
+        detector = FakeDetector()
+        results = list(predict_batched(detector, list(range(35)), batch=16))
+        self.assertEqual(detector.sizes, [16, 16, 3])
+        self.assertEqual(len(results), 35)
+
     def test_matching_is_class_aware_confidence_ordered_and_one_to_one(self):
         ground_truths = [
             GroundTruth((0, 0, 10, 10), 0, 0, 0),

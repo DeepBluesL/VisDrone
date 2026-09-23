@@ -1,0 +1,73 @@
+{
+  "dataset": "VisDrone2019-DET",
+  "created_utc": "2026-09-23T02:18:11.201718+00:00",
+  "sources": {
+    "official_repository": "https://github.com/VisDrone/VisDrone-Dataset",
+    "mirror_configuration": "https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/datasets/VisDrone.yaml",
+    "archive_base_url": "https://github.com/ultralytics/assets/releases/download/v0.0.0",
+    "note": "Ultralytics release assets mirror the three archives linked by the official repository."
+  },
+  "expected_total_images": 8629,
+  "archives": [
+    {
+      "split": "test-dev",
+      "url": "https://github.com/ultralytics/assets/releases/download/v0.0.0/VisDrone2019-DET-test-dev.zip",
+      "alternate_urls": [
+        "https://drive.usercontent.google.com/download?id=1PFdW_VFSCfZ_sTSZAGjQdifF_Xd5mf0V&export=download&confirm=t"
+      ],
+      "archive": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\archives\\VisDrone2019-DET-test-dev.zip",
+      "archive_bytes": 311251787,
+      "expected_archive_bytes": 311251787,
+      "archive_sha256": "b28a94b06dfd9e36ce77ff8155fb82b9d2c030f198a76105933bd56c6ea6a68d",
+      "zip_crc_ok": true,
+      "zip_members": 3224,
+      "expected_images": 1610,
+      "extracted_to": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\raw\\VisDrone2019-DET-test-dev",
+      "counts": {
+        "images": 1610,
+        "annotations": 1610,
+        "matches_expected": true
+      }
+    },
+    {
+      "split": "train",
+      "url": "https://github.com/ultralytics/assets/releases/download/v0.0.0/VisDrone2019-DET-train.zip",
+      "alternate_urls": [
+        "https://drive.usercontent.google.com/download?id=1a2oHjcEcwXP8oUF95qiwrqzACb2YlUhn&export=download&confirm=t"
+      ],
+      "archive": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\archives\\VisDrone2019-DET-train.zip",
+      "archive_bytes": 1549875511,
+      "expected_archive_bytes": 1549875511,
+      "archive_sha256": "86a77eba93137bfc16e4993860de9245b0675c0dba0d3ab98fb458699e256f84",
+      "zip_crc_ok": true,
+      "zip_members": 12945,
+      "expected_images": 6471,
+      "extracted_to": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\raw\\VisDrone2019-DET-train",
+      "counts": {
+        "images": 6471,
+        "annotations": 6471,
+        "matches_expected": true
+      }
+    },
+    {
+      "split": "val",
+      "url": "https://github.com/ultralytics/assets/releases/download/v0.0.0/VisDrone2019-DET-val.zip",
+      "alternate_urls": [
+        "https://drive.usercontent.google.com/download?id=1bxK5zgLn0_L8x276eKkuYA_FzwCIjb59&export=download&confirm=t"
+      ],
+      "archive": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\archives\\VisDrone2019-DET-val.zip",
+      "archive_bytes": 81638851,
+      "expected_archive_bytes": 81638851,
+      "archive_sha256": "abeea063037e5d20398837deb11084e652402a34ddf4f207bdf541a6f2a35ef9",
+      "zip_crc_ok": true,
+      "zip_members": 1100,
+      "expected_images": 548,
+      "extracted_to": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\raw\\VisDrone2019-DET-val",
+      "counts": {
+        "images": 548,
+        "annotations": 548,
+        "matches_expected": true
+      }
+    }
+  ]
+}

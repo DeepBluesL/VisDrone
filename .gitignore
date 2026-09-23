@@ -2,8 +2,8 @@
 .runtime/
 __pycache__/
 *.py[cod]
-data/
-runs/
+/data/
+/runs/
 *.cache
 *.zip
 *.part

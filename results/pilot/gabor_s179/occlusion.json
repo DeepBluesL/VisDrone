@@ -1,0 +1,140 @@
+{
+  "diagnostic": "class-aware ground-truth recall under natural VisDrone occlusion",
+  "protocol": "Predictions are greedily matched by descending confidence against all eligible ground truth in each image. Matching is class-aware, one-to-one, and performed before stratification. This is not AP and does not implement official VisDrone ignored-region handling.",
+  "metrics": {
+    "overall": {
+      "match_count": 10808,
+      "total": 38759,
+      "recall": 0.27885136355427126
+    },
+    "occlusion": {
+      "0": {
+        "match_count": 6340,
+        "total": 16810,
+        "recall": 0.3771564544913742
+      },
+      "1": {
+        "match_count": 4099,
+        "total": 18863,
+        "recall": 0.21730371626994646
+      },
+      "2": {
+        "match_count": 369,
+        "total": 3086,
+        "recall": 0.11957226182760855
+      }
+    },
+    "truncation": {
+      "0": {
+        "match_count": 10114,
+        "total": 37287,
+        "recall": 0.27124735162389035
+      },
+      "1": {
+        "match_count": 694,
+        "total": 1472,
+        "recall": 0.47146739130434784
+      },
+      "2": {
+        "match_count": 0,
+        "total": 0,
+        "recall": null
+      }
+    },
+    "size": {
+      "small": {
+        "match_count": 3967,
+        "total": 26575,
+        "recall": 0.14927563499529634
+      },
+      "medium": {
+        "match_count": 6041,
+        "total": 11116,
+        "recall": 0.5434508816120907
+      },
+      "large": {
+        "match_count": 800,
+        "total": 1068,
+        "recall": 0.7490636704119851
+      }
+    },
+    "class": {
+      "1:pedestrian": {
+        "match_count": 1303,
+        "total": 8844,
+        "recall": 0.14733152419719583
+      },
+      "2:people": {
+        "match_count": 44,
+        "total": 5125,
+        "recall": 0.008585365853658537
+      },
+      "3:bicycle": {
+        "match_count": 0,
+        "total": 1287,
+        "recall": 0.0
+      },
+      "4:car": {
+        "match_count": 8351,
+        "total": 14064,
+        "recall": 0.5937855517633674
+      },
+      "5:van": {
+        "match_count": 91,
+        "total": 1975,
+        "recall": 0.04607594936708861
+      },
+      "6:truck": {
+        "match_count": 37,
+        "total": 750,
+        "recall": 0.04933333333333333
+      },
+      "7:tricycle": {
+        "match_count": 9,
+        "total": 1045,
+        "recall": 0.00861244019138756
+      },
+      "8:awning-tricycle": {
+        "match_count": 0,
+        "total": 532,
+        "recall": 0.0
+      },
+      "9:bus": {
+        "match_count": 17,
+        "total": 251,
+        "recall": 0.06772908366533864
+      },
+      "10:motor": {
+        "match_count": 956,
+        "total": 4886,
+        "recall": 0.1956610724519034
+      }
+    }
+  },
+  "settings": {
+    "data_root": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\raw\\VisDrone2019-DET-val",
+    "weights": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\pilot\\gabor_s179.pt",
+    "imgsz": 512,
+    "confidence_threshold": 0.05,
+    "nms_iou_threshold": 0.5,
+    "matching_iou_threshold": 0.5,
+    "device": "0",
+    "batch": 16,
+    "max_det": 500,
+    "max_images": null,
+    "source_image_count": 548,
+    "evaluated_image_count": 548,
+    "is_subset_smoke_run": false,
+    "eligible_ground_truth": "score > 0, source class 1..10, valid after clipping",
+    "small_object_definition": "clipped raw-image area < 32^2 pixels (COCO convention)",
+    "size_bins": "small < 32^2; medium 32^2 to < 96^2; large >= 96^2 raw pixels"
+  },
+  "excluded_ground_truth_counts": {
+    "score_nonpositive": 1410
+  },
+  "provenance": {
+    "weights_sha256": "e94d075be7aff38d3608b8a01e0da9a709ce3c371ac5a6f84d40e7dd0a46d68e",
+    "filenames_sha256": "d546ef6e1e3e86d53f7d43f7edc719a061c36329cf92853ee120f9f37519f302",
+    "filenames_digest_definition": "SHA-256 of sorted evaluated basenames, each followed by newline"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "best_variant": "random_stem",
+  "visualized_variants": [
+    "baseline",
+    "full",
+    "random_stem"
+  ],
+  "selection_method": "Highest validation AP50-95 among the 13 development experiments; no independent test selection"
+}

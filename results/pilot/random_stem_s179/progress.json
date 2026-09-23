@@ -1,0 +1,13 @@
+{
+  "variant": "random_stem",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 187.5,
+  "metrics": {
+    "metrics/precision(B)": 0.19515522127395543,
+    "metrics/recall(B)": 0.1372153006545374,
+    "metrics/mAP50(B)": 0.10490775637507965,
+    "metrics/mAP50-95(B)": 0.04991062936502266
+  }
+}

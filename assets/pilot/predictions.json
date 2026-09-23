@@ -1,0 +1,114 @@
+{
+  "figure": "E:\\DeepLearning\\ML_mid\\VisDrone\\assets\\pilot\\predictions.png",
+  "data_root": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\raw\\VisDrone2019-DET-val",
+  "selection": {
+    "method": "local random sample from sorted filenames",
+    "seed": 179,
+    "filenames": [
+      "0000271_04401_d_0000394.jpg",
+      "0000215_00000_d_0000256.jpg",
+      "0000116_00819_d_0000084.jpg"
+    ]
+  },
+  "inference": {
+    "imgsz": 512,
+    "confidence_threshold": 0.05,
+    "nms_iou_threshold": 0.5,
+    "max_det": 500,
+    "max_draw": 80,
+    "device": "0"
+  },
+  "checkpoints": [
+    {
+      "label": "baseline",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\pilot\\baseline_s179.pt",
+      "sha256": "1a54fee9dde820d8136e636b247a7746fa1d6874e7cda187a900a3e1da450dd7"
+    },
+    {
+      "label": "full",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\pilot\\full_s179.pt",
+      "sha256": "a399ce9d890f6a3dc62230140ddbb4abd6b9456b769267b187a51718bbe08958"
+    },
+    {
+      "label": "random_stem",
+      "path": "E:\\DeepLearning\\ML_mid\\VisDrone\\checkpoints\\pilot\\random_stem_s179.pt",
+      "sha256": "a6e0da20aaff2996e9c0e63fda170ed004f24dbb124110c5ec3afebc3d8f9758"
+    }
+  ],
+  "images": [
+    {
+      "filename": "0000271_04401_d_0000394.jpg",
+      "eligible_ground_truth_count": 86,
+      "models": [
+        {
+          "label": "baseline",
+          "prediction_count": 167,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "full",
+          "prediction_count": 87,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "random_stem",
+          "prediction_count": 114,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        }
+      ]
+    },
+    {
+      "filename": "0000215_00000_d_0000256.jpg",
+      "eligible_ground_truth_count": 157,
+      "models": [
+        {
+          "label": "baseline",
+          "prediction_count": 168,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "full",
+          "prediction_count": 122,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "random_stem",
+          "prediction_count": 172,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        }
+      ]
+    },
+    {
+      "filename": "0000116_00819_d_0000084.jpg",
+      "eligible_ground_truth_count": 36,
+      "models": [
+        {
+          "label": "baseline",
+          "prediction_count": 57,
+          "rendered_count": 57,
+          "render_limit_applied": false
+        },
+        {
+          "label": "full",
+          "prediction_count": 83,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        },
+        {
+          "label": "random_stem",
+          "prediction_count": 125,
+          "rendered_count": 80,
+          "render_limit_applied": true
+        }
+      ]
+    }
+  ],
+  "ground_truth_protocol": "score > 0, source class 1..10, valid clipped boxes",
+  "credits": "VisDrone2019-DET validation images and annotations, VisDrone team at Tianjin University (https://github.com/VisDrone/VisDrone-Dataset); detector scaffold from Ultralytics YOLO."
+}

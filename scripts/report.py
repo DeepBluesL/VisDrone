@@ -444,6 +444,15 @@ def plot_learning_curves(runs: Sequence[dict[str, Any]], path: Path) -> bool:
         ax.set_title(title)
         if ax.lines:
             ax.legend(frameon=False, fontsize=8)
+        else:
+            ax.text(
+                0.5,
+                0.5,
+                "No completed runs yet",
+                transform=ax.transAxes,
+                ha="center",
+                va="center",
+            )
     fig.tight_layout()
     if drew_any:
         _save_figure(fig, path)
@@ -496,7 +505,20 @@ def plot_efficiency(rows: Sequence[dict[str, Any]], path: Path) -> bool:
     ]
     if not usable:
         return False
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.4))
+    fig, axes = plt.subplots(1, 2, figsize=(13, 7.0))
+    legend_handles = []
+    label_offsets = {
+        "parameters_mean": {
+            "ghost": (12, 13),
+            "without_gabor": (-14, -14),
+            "full": (-14, -13),
+            "without_sppf": (13, 13),
+        },
+        "gflops_at_imgsz_mean": {
+            "full": (-14, -13),
+            "without_sppf": (13, 13),
+        },
+    }
     for ax, key, xlabel in (
         (axes[0], "parameters_mean", "Parameters (millions)"),
         (
@@ -509,13 +531,49 @@ def plot_efficiency(rows: Sequence[dict[str, Any]], path: Path) -> bool:
             x = row[key] / 1e6 if key == "parameters_mean" else row[key]
             y = row["ap50_95_percent_mean"]
             color = plt.get_cmap("tab10")(index % 10)
-            ax.scatter(x, y, s=55, color=color)
-            ax.annotate(row["display_name"], (x, y), xytext=(4, 4), textcoords="offset points", fontsize=7)
+            point = ax.scatter(x, y, s=48, color=color, edgecolor="white", linewidth=0.6)
+            offset = label_offsets[key].get(row["variant"], (7, 8))
+            ax.annotate(
+                str(index + 1),
+                xy=(x, y),
+                xytext=offset,
+                textcoords="offset points",
+                color="#222222",
+                fontsize=7,
+                fontweight="bold",
+                ha="center",
+                va="center",
+                bbox={
+                    "boxstyle": "round,pad=0.16",
+                    "facecolor": "white",
+                    "edgecolor": color,
+                    "linewidth": 0.7,
+                    "alpha": 0.95,
+                },
+                arrowprops={
+                    "arrowstyle": "-",
+                    "color": color,
+                    "linewidth": 0.7,
+                    "shrinkA": 1,
+                    "shrinkB": 2,
+                },
+            )
+            if ax is axes[0]:
+                legend_handles.append(point)
         ax.set_xlabel(xlabel)
         _style_axis(ax, "AP50–95 (%)")
     axes[0].set_title("Accuracy vs. model size")
     axes[1].set_title("Accuracy vs. computation")
-    fig.tight_layout()
+    fig.legend(
+        legend_handles,
+        [f"{index + 1}. {row['display_name']}" for index, row in enumerate(usable)],
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.01),
+        ncol=4,
+        frameon=False,
+        fontsize=8,
+    )
+    fig.tight_layout(rect=(0, 0.23, 1, 1))
     _save_figure(fig, path)
     return True
 
@@ -769,10 +827,24 @@ def build_markdown_report(
     generated_plots: Sequence[str],
     notices: Sequence[str],
 ) -> str:
+    completed_variants = {
+        run["variant"] for run in runs if run["variant"] in VARIANT_ORDER
+    }
+    if completed_variants == set(VARIANT_ORDER):
+        suite_status = (
+            f"> Suite 状态：{len(VARIANT_ORDER)}/{len(VARIANT_ORDER)} 个预定义变体均已完成。"
+        )
+    else:
+        suite_status = (
+            f"> Suite 状态：已完成 {len(completed_variants)}/{len(VARIANT_ORDER)} 个预定义变体。"
+            "结果仍不完整；下表和图只反映当前已完成运行。"
+        )
     lines = [
         f"# VisDrone 检测实验报告：{suite}",
         "",
         "本报告只汇总 `status=completed` 的真实运行记录。AP 数值均为百分数。这里的验证是由 VisDrone 标注转换得到的标准 YOLO 10 类评估；它没有实现官方 VisDrone 评测器对忽略区域的匹配规则，因此不能作为官方 VisDrone DET 榜单成绩。",
+        "",
+        suite_status,
         "",
         "## 汇总结果",
         "",

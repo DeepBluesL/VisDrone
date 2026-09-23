@@ -1,0 +1,13 @@
+{
+  "variant": "without_se",
+  "seed": 179,
+  "epoch": 10,
+  "epochs": 10,
+  "elapsed_seconds": 199.2,
+  "metrics": {
+    "metrics/precision(B)": 0.15744984038422166,
+    "metrics/recall(B)": 0.12154598424137777,
+    "metrics/mAP50(B)": 0.08288089949637648,
+    "metrics/mAP50-95(B)": 0.037264851711077525
+  }
+}
