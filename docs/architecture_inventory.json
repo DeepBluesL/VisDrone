@@ -1,0 +1,140 @@
+{
+  "scope": "untrained architecture measurements, not accuracy results",
+  "imgsz": 512,
+  "variants": [
+    {
+      "variant": "baseline",
+      "factors": [],
+      "parameters": 3012798,
+      "conv_linear_gflops_512": 5.17914624,
+      "fixed_filter_coefficients": 0
+    },
+    {
+      "variant": "c3k2",
+      "factors": [
+        "c3k2"
+      ],
+      "parameters": 3010478,
+      "conv_linear_gflops_512": 5.103648768,
+      "fixed_filter_coefficients": 0
+    },
+    {
+      "variant": "ghost",
+      "factors": [
+        "ghost"
+      ],
+      "parameters": 2499310,
+      "conv_linear_gflops_512": 4.37723136,
+      "fixed_filter_coefficients": 0
+    },
+    {
+      "variant": "se",
+      "factors": [
+        "se"
+      ],
+      "parameters": 3012960,
+      "conv_linear_gflops_512": 5.179146496,
+      "fixed_filter_coefficients": 0
+    },
+    {
+      "variant": "sppf",
+      "factors": [
+        "sppf"
+      ],
+      "parameters": 3012798,
+      "conv_linear_gflops_512": 5.17914624,
+      "fixed_filter_coefficients": 0
+    },
+    {
+      "variant": "gabor",
+      "factors": [
+        "gabor"
+      ],
+      "parameters": 3012878,
+      "conv_linear_gflops_512": 5.5042048,
+      "fixed_filter_coefficients": 2400
+    },
+    {
+      "variant": "full",
+      "factors": [
+        "c3k2",
+        "ghost",
+        "se",
+        "sppf",
+        "gabor"
+      ],
+      "parameters": 2497232,
+      "conv_linear_gflops_512": 4.626792704,
+      "fixed_filter_coefficients": 2400
+    },
+    {
+      "variant": "without_c3k2",
+      "factors": [
+        "ghost",
+        "se",
+        "sppf",
+        "gabor"
+      ],
+      "parameters": 2499552,
+      "conv_linear_gflops_512": 4.702290176,
+      "fixed_filter_coefficients": 2400
+    },
+    {
+      "variant": "without_ghost",
+      "factors": [
+        "c3k2",
+        "se",
+        "sppf",
+        "gabor"
+      ],
+      "parameters": 3010720,
+      "conv_linear_gflops_512": 5.428707584,
+      "fixed_filter_coefficients": 2400
+    },
+    {
+      "variant": "without_se",
+      "factors": [
+        "c3k2",
+        "ghost",
+        "sppf",
+        "gabor"
+      ],
+      "parameters": 2497070,
+      "conv_linear_gflops_512": 4.626792448,
+      "fixed_filter_coefficients": 2400
+    },
+    {
+      "variant": "without_sppf",
+      "factors": [
+        "c3k2",
+        "ghost",
+        "se",
+        "gabor"
+      ],
+      "parameters": 2497232,
+      "conv_linear_gflops_512": 4.626792704,
+      "fixed_filter_coefficients": 2400
+    },
+    {
+      "variant": "without_gabor",
+      "factors": [
+        "c3k2",
+        "ghost",
+        "se",
+        "sppf"
+      ],
+      "parameters": 2497152,
+      "conv_linear_gflops_512": 4.301734144,
+      "fixed_filter_coefficients": 0
+    },
+    {
+      "variant": "random_stem",
+      "factors": [
+        "random"
+      ],
+      "parameters": 3012878,
+      "conv_linear_gflops_512": 5.5042048,
+      "fixed_filter_coefficients": 2400
+    }
+  ]
+}

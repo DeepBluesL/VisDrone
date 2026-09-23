@@ -1,0 +1,14 @@
+.venv/
+.runtime/
+__pycache__/
+*.py[cod]
+data/
+runs/
+*.cache
+*.zip
+*.part
+*.log
+.env
+results/.staging/
+results/smoke/
+checkpoints/smoke/
