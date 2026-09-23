@@ -23,13 +23,27 @@ os.environ.setdefault("YOLO_CONFIG_DIR", str(ROOT / ".runtime" / "ultralytics"))
 os.environ.setdefault("MPLCONFIGDIR", str(ROOT / ".runtime" / "matplotlib"))
 
 import torch
+from torch import nn
 
 from visdrone_migration.model import AttentionStage, VARIANTS
 from visdrone_migration.modules import GaborStem
+from visdrone_migration.evidence import code_fingerprint
+from visdrone_migration.spatial_blocks import haar_filters
 
 
-LAYER_INDICES = (0, 2, 4, 6, 8, 9)
+LAYER_INDICES = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 BANK_ATOL = 1e-3
+CLASS_NAMES = (
+    "pedestrian", "people", "bicycle", "car", "van", "truck", "tricycle",
+    "awning-tricycle", "bus", "motor",
+)
+EFFICIENT_UNITS = {
+    "pconv": "visdrone_migration.classic_blocks.FasterBlock",
+    "star": "visdrone_migration.classic_blocks.StarBlock",
+    "wtconv": "visdrone_migration.spatial_blocks.WTBlock",
+    "lsconv": "visdrone_migration.spatial_blocks.LSConv",
+}
+EFFICIENT_DEPTHS = {4: 2, 6: 2, 8: 1}
 
 
 def sha256_file(path: Path) -> str:
@@ -49,9 +63,13 @@ def expected_layers(variant: str) -> tuple[dict[int, str], str | None]:
     factors = VARIANTS[variant]
     expected = {
         0: "ultralytics.nn.modules.conv.Conv",
+        1: "ultralytics.nn.modules.conv.Conv",
         2: "ultralytics.nn.modules.block.C2f",
+        3: "ultralytics.nn.modules.conv.Conv",
         4: "ultralytics.nn.modules.block.C2f",
+        5: "ultralytics.nn.modules.conv.Conv",
         6: "ultralytics.nn.modules.block.C2f",
+        7: "ultralytics.nn.modules.conv.Conv",
         8: "ultralytics.nn.modules.block.C2f",
         9: "ultralytics.nn.modules.block.SPPF",
     }
@@ -68,7 +86,39 @@ def expected_layers(variant: str) -> tuple[dict[int, str], str | None]:
             expected[index] = "visdrone_migration.modules.C3Ghost"
     if "sppf" in factors:
         expected[9] = "visdrone_migration.modules.EnhancedSPPF"
+    if variant == "ghostconv":
+        for index in (1, 3, 5, 7):
+            expected[index] = "visdrone_migration.modules.GhostConv"
+    if variant in EFFICIENT_UNITS:
+        for index in EFFICIENT_DEPTHS:
+            expected[index] = "visdrone_migration.model.EfficientC2f"
     return expected, bank_mode
+
+
+def verify_snapshot_hashes(suite_dir: Path, protocol: dict[str, object]) -> tuple[dict[str, bool], dict[str, object]]:
+    snapshot = protocol.get("data_snapshot") or {}
+    specifications = {
+        "dataset_yaml": (snapshot.get("dataset_yaml"), protocol.get("data_yaml_sha256")),
+        "preparation_manifest": (
+            snapshot.get("preparation_manifest"), protocol.get("preparation_manifest_sha256")
+        ),
+    }
+    checks: dict[str, bool] = {}
+    details: dict[str, object] = {}
+    for name, (raw_path, expected_hash) in specifications.items():
+        path = ROOT / str(raw_path) if raw_path else suite_dir / "data_snapshot" / (
+            "dataset.yaml" if name == "dataset_yaml" else "preparation_manifest.json"
+        )
+        exists = path.is_file()
+        actual_hash = sha256_file(path) if exists else None
+        checks[f"snapshot_{name}_exists"] = exists
+        checks[f"snapshot_{name}_sha256"] = exists and actual_hash == expected_hash
+        details[name] = {
+            "path": path.relative_to(ROOT).as_posix(),
+            "expected_sha256": expected_hash,
+            "actual_sha256": actual_hash,
+        }
+    return checks, details
 
 
 def read_epoch_history(path: Path) -> tuple[list[int], list[float]]:
@@ -161,6 +211,15 @@ def verify_run(
         checks["model_variant"] = getattr(model, "variant", None) == variant
         checks["yaml_variant"] = model.yaml.get("migration_variant") == variant
         checks["yaml_seed"] = model.yaml.get("migration_module_seed") == seed
+        model_names = getattr(model, "names", {})
+        if isinstance(model_names, dict):
+            normalized_names = tuple(str(model_names.get(index)) for index in range(len(CLASS_NAMES)))
+        else:
+            normalized_names = tuple(str(value) for value in model_names)
+        details["class_names"] = list(normalized_names)
+        details["class_count"] = getattr(model, "nc", model.yaml.get("nc"))
+        checks["class_names"] = normalized_names == CLASS_NAMES
+        checks["class_count"] = getattr(model, "nc", model.yaml.get("nc")) == len(CLASS_NAMES)
 
         actual_layers = {index: qualified_name(model.model[index]) for index in LAYER_INDICES}
         expected, bank_mode = expected_layers(variant)
@@ -183,6 +242,69 @@ def verify_run(
             )
         else:
             checks["se_wrapper_absent"] = not isinstance(model.model[2], AttentionStage)
+
+        if variant == "ghostconv":
+            ghost_activations = {}
+            for index in (1, 3, 5, 7):
+                layer = model.model[index]
+                active = (
+                    qualified_name(layer) == "visdrone_migration.modules.GhostConv"
+                    and isinstance(layer.cv1.act, nn.SiLU)
+                    and isinstance(layer.cv2.act, nn.SiLU)
+                )
+                ghost_activations[str(index)] = active
+            details["ghostconv_silu"] = ghost_activations
+            checks["ghostconv_silu"] = all(ghost_activations.values())
+
+        if variant in EFFICIENT_UNITS:
+            expected_unit = EFFICIENT_UNITS[variant]
+            stage_details = {}
+            for index, expected_depth in EFFICIENT_DEPTHS.items():
+                stage = model.model[index]
+                units = list(getattr(stage, "m", ()))
+                stage_details[str(index)] = {
+                    "kind": getattr(stage, "kind", None),
+                    "depth": len(units),
+                    "unit_classes": [qualified_name(unit) for unit in units],
+                }
+            details["efficient_stages"] = stage_details
+            checks["efficient_stage_kind"] = all(
+                item["kind"] == variant for item in stage_details.values()
+            )
+            checks["efficient_stage_depth"] = all(
+                stage_details[str(index)]["depth"] == depth
+                for index, depth in EFFICIENT_DEPTHS.items()
+            )
+            checks["efficient_stage_units"] = all(
+                all(name == expected_unit for name in stage_details[str(index)]["unit_classes"])
+                for index in EFFICIENT_DEPTHS
+            )
+            if variant == "wtconv":
+                maximum = 0.0
+                buffers_pass = True
+                buffer_count = 0
+                for index in EFFICIENT_DEPTHS:
+                    for unit in model.model[index].m:
+                        spatial = unit.spatial
+                        expected_bank = haar_filters(spatial.channels).to(
+                            dtype=spatial.analysis_filter.dtype,
+                            device=spatial.analysis_filter.device,
+                        )
+                        for name in ("analysis_filter", "synthesis_filter"):
+                            actual = getattr(spatial, name)
+                            difference = float((actual.float() - expected_bank.float()).abs().max())
+                            maximum = max(maximum, difference)
+                            buffers_pass = buffers_pass and torch.allclose(
+                                actual, expected_bank, atol=BANK_ATOL, rtol=BANK_ATOL
+                            )
+                            buffer_count += 1
+                checks["wtconv_fixed_haar_buffers"] = buffers_pass and buffer_count > 0
+                details["wtconv_fixed_haar_buffers"] = {
+                    "buffer_count": buffer_count,
+                    "atol": BANK_ATOL,
+                    "rtol": BANK_ATOL,
+                    "max_abs_difference": maximum,
+                }
 
         parameter_count = sum(parameter.numel() for parameter in model.parameters())
         details["parameter_count"] = parameter_count
@@ -244,7 +366,10 @@ def verify_run(
 
 
 def verify_suite(
-    suite: str, expected_runs: int = 13, allow_incomplete: bool = False
+    suite: str,
+    expected_runs: int | None = None,
+    allow_incomplete: bool = False,
+    check_current_code: bool = False,
 ) -> tuple[dict[str, object], int]:
     suite_dir = ROOT / "results" / suite
     protocol_path = suite_dir / "protocol.json"
@@ -254,10 +379,12 @@ def verify_suite(
     variants = list(protocol.get("variants") or [])
     seeds = [int(seed) for seed in protocol.get("seeds") or []]
     expected_ids = [f"{variant}_s{seed}" for seed in seeds for variant in variants]
-    if len(expected_ids) != expected_runs:
+    protocol_run_count = len(expected_ids)
+    if expected_runs is not None and protocol_run_count != expected_runs:
         raise ValueError(
-            f"protocol defines {len(expected_ids)} runs, but --expected-runs is {expected_runs}"
+            f"protocol defines {protocol_run_count} runs, but --expected-runs is {expected_runs}"
         )
+    expected_runs = protocol_run_count
     unknown_variants = sorted(set(variants) - set(VARIANTS))
     if unknown_variants:
         raise ValueError(f"protocol contains unknown variant: {unknown_variants[0]}")
@@ -280,8 +407,15 @@ def verify_suite(
             if run_id in present_ids:
                 run_results.append(verify_run(suite, variant, seed, protocol))
 
+    snapshot_checks, snapshot_details = verify_snapshot_hashes(suite_dir, protocol)
+    current_code_sha256 = code_fingerprint(ROOT)
+    current_code_equals_protocol = current_code_sha256 == protocol.get("training_code_sha256")
+    suite_checks = dict(snapshot_checks)
+    if check_current_code:
+        suite_checks["current_code_equals_protocol"] = current_code_equals_protocol
     all_present_pass = all(result["passed"] for result in run_results)
-    if unexpected_ids or not all_present_pass:
+    suite_checks_pass = all(suite_checks.values())
+    if unexpected_ids or not all_present_pass or not suite_checks_pass:
         status, exit_code = "failed", 1
     elif missing_ids:
         status, exit_code = ("partial", 0) if allow_incomplete else ("incomplete", 2)
@@ -296,6 +430,8 @@ def verify_suite(
         "verified_run_count": len(run_results),
         "passed_run_count": sum(bool(result["passed"]) for result in run_results),
         "allow_incomplete": allow_incomplete,
+        "check_current_code": check_current_code,
+        "suite_checks": suite_checks,
         "missing_runs": missing_ids,
         "unexpected_runs": unexpected_ids,
         "runs": run_results,
@@ -305,6 +441,9 @@ def verify_suite(
             "training_code_sha256": protocol.get("training_code_sha256"),
             "data_fingerprint": protocol.get("data_fingerprint"),
             "environment_fingerprint": protocol.get("environment_fingerprint"),
+            "snapshot": snapshot_details,
+            "current_code_sha256": current_code_sha256,
+            "current_code_equals_protocol": current_code_equals_protocol,
         },
         "verifier_provenance": {
             "path": verifier_path.relative_to(ROOT).as_posix(),
@@ -322,12 +461,20 @@ def verify_suite(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--suite", default="pilot")
-    parser.add_argument("--expected-runs", type=int, default=13)
+    parser.add_argument(
+        "--expected-runs", type=int,
+        help="optional assertion; by default the expected count is derived from protocol.json",
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument(
         "--allow-incomplete",
         action="store_true",
         help="verify present runs but label output partial when protocol runs are missing",
+    )
+    parser.add_argument(
+        "--check-current-code",
+        action="store_true",
+        help="fail if the live training-code fingerprint differs from the archived protocol",
     )
     return parser
 
@@ -336,9 +483,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if Path(args.suite).name != args.suite or args.suite in {"", ".", ".."}:
         raise ValueError("--suite must be one directory name")
-    if args.expected_runs < 1:
+    if args.expected_runs is not None and args.expected_runs < 1:
         raise ValueError("--expected-runs must be positive")
-    payload, exit_code = verify_suite(args.suite, args.expected_runs, args.allow_incomplete)
+    payload, exit_code = verify_suite(
+        args.suite, args.expected_runs, args.allow_incomplete, args.check_current_code
+    )
     output = (
         args.output.resolve()
         if args.output is not None

@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
 FACTORS = ("c3k2", "ghost", "se", "sppf", "gabor")
+EXTENSION_ORDER = ("baseline", "ghostconv", "pconv", "star", "wtconv", "lsconv")
 SINGLE_ORDER = ("baseline",) + FACTORS
 LEAVE_ONE_OUT_ORDER = ("full",) + tuple(f"without_{name}" for name in FACTORS)
 VARIANT_ORDER = SINGLE_ORDER + LEAVE_ONE_OUT_ORDER + ("random_stem",)
@@ -39,6 +40,11 @@ DISPLAY_NAMES = {
     "without_sppf": "Full − SPPF",
     "without_gabor": "Full − Gabor",
     "random_stem": "Random stem control",
+    "ghostconv": "GhostConv",
+    "pconv": "PConv",
+    "star": "Star block",
+    "wtconv": "WTConv",
+    "lsconv": "LSConv",
 }
 METRIC_KEYS = {
     "precision": "metrics/precision(B)",
@@ -331,9 +337,11 @@ def _errorbar_for_bar(ax: plt.Axes, x: float, y: float, std: float | None) -> No
         ax.errorbar(x, y, yerr=std, color="#222222", capsize=3, linewidth=1.2)
 
 
-def plot_comparison(rows: Sequence[dict[str, Any]], path: Path) -> bool:
+def plot_comparison(
+    rows: Sequence[dict[str, Any]], path: Path, order: Sequence[str] = SINGLE_ORDER
+) -> bool:
     by_variant = {row["variant"]: row for row in rows}
-    selected = [by_variant[name] for name in SINGLE_ORDER if name in by_variant]
+    selected = [by_variant[name] for name in order if name in by_variant]
     if not selected:
         return False
     x = list(range(len(selected)))
@@ -406,7 +414,9 @@ def _load_epoch_histories(runs: Sequence[dict[str, Any]]) -> list[dict[str, Any]
     return histories
 
 
-def plot_learning_curves(runs: Sequence[dict[str, Any]], path: Path) -> bool:
+def plot_learning_curves(
+    runs: Sequence[dict[str, Any]], path: Path, order: Sequence[str] | None = None
+) -> bool:
     histories = _load_epoch_histories(runs)
     if not histories:
         return False
@@ -414,9 +424,15 @@ def plot_learning_curves(runs: Sequence[dict[str, Any]], path: Path) -> bool:
     for history in histories:
         grouped[history["variant"]].append(history["points"])
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.2), sharey=True)
-    panel_orders = (SINGLE_ORDER, LEAVE_ONE_OUT_ORDER + ("random_stem",))
-    titles = ("Baseline and single interventions", "Full model, ablations, and control")
+    if order is None:
+        fig, axes = plt.subplots(1, 2, figsize=(13, 5.2), sharey=True)
+        panel_orders = (SINGLE_ORDER, LEAVE_ONE_OUT_ORDER + ("random_stem",))
+        titles = ("Baseline and single interventions", "Full model, ablations, and control")
+    else:
+        fig, axis = plt.subplots(figsize=(11.5, 6.2))
+        axes = [axis]
+        panel_orders = (tuple(order),)
+        titles = ("Validation learning curves across seeds",)
     palette = plt.get_cmap("tab10")
     drew_any = False
     for ax, order, title in zip(axes, panel_orders, titles):
@@ -433,6 +449,15 @@ def plot_learning_curves(runs: Sequence[dict[str, Any]], path: Path) -> bool:
                 means.append(mean)
                 stds.append(std)
             color = palette(color_index % 10)
+            for points in series:
+                individual_epochs = sorted(points)
+                ax.plot(
+                    individual_epochs,
+                    [points[epoch] for epoch in individual_epochs],
+                    color=color,
+                    linewidth=0.8,
+                    alpha=0.22,
+                )
             ax.plot(epochs, means, label=DISPLAY_NAMES.get(variant, variant), color=color, linewidth=1.8)
             if any(value is not None for value in stds):
                 lower = [mean - (std or 0.0) for mean, std in zip(means, stds)]
@@ -818,6 +843,49 @@ def _metric_cell(row: dict[str, Any], metric: str) -> str:
     return f"{mean:.2f} ± {std:.2f}" if std is not None else f"{mean:.2f}"
 
 
+def protocol_run_ids(protocol: dict[str, Any] | None) -> list[str]:
+    """Return the exact run matrix declared by protocol.json."""
+    if protocol is None:
+        return []
+    content = protocol["content"]
+    variants = [str(value) for value in content.get("variants") or []]
+    seeds = [int(value) for value in content.get("seeds") or []]
+    return [f"{variant}_s{seed}" for seed in seeds for variant in variants]
+
+
+def paired_baseline_deltas(
+    runs: Sequence[dict[str, Any]], metric: str = "ap50_95"
+) -> list[dict[str, Any]]:
+    """Pair each intervention with the baseline from the same seed."""
+    baseline = {
+        int(run["seed"]): float(run["_metrics"][metric]) * 100.0
+        for run in runs
+        if run["variant"] == "baseline"
+    }
+    grouped: dict[str, list[tuple[int, float]]] = defaultdict(list)
+    for run in runs:
+        variant = str(run["variant"])
+        seed = int(run["seed"])
+        if variant != "baseline" and seed in baseline:
+            delta = float(run["_metrics"][metric]) * 100.0 - baseline[seed]
+            grouped[variant].append((seed, delta))
+    output = []
+    for variant in sorted(grouped, key=_variant_sort_key):
+        pairs = sorted(grouped[variant])
+        values = [value for _, value in pairs]
+        output.append(
+            {
+                "variant": variant,
+                "display_name": DISPLAY_NAMES.get(variant, variant),
+                "paired_seeds": [seed for seed, _ in pairs],
+                "deltas_percent_points": values,
+                "mean_percent_points": statistics.fmean(values),
+                "std_percent_points": statistics.stdev(values) if len(values) > 1 else None,
+            }
+        )
+    return output
+
+
 def build_markdown_report(
     suite: str,
     runs: Sequence[dict[str, Any]],
@@ -826,29 +894,26 @@ def build_markdown_report(
     occlusion_rows: Sequence[dict[str, Any]],
     generated_plots: Sequence[str],
     notices: Sequence[str],
+    protocol: dict[str, Any] | None = None,
+    paired_deltas: Sequence[dict[str, Any]] = (),
 ) -> str:
-    completed_variants = {
-        run["variant"] for run in runs if run["variant"] in VARIANT_ORDER
-    }
-    if completed_variants == set(VARIANT_ORDER):
-        suite_status = (
-            f"> Suite 状态：{len(VARIANT_ORDER)}/{len(VARIANT_ORDER)} 个预定义变体均已完成。"
-        )
-    else:
-        suite_status = (
-            f"> Suite 状态：已完成 {len(completed_variants)}/{len(VARIANT_ORDER)} 个预定义变体。"
-            "结果仍不完整；下表和图只反映当前已完成运行。"
-        )
+    expected_ids = protocol_run_ids(protocol)
+    present_ids = {run["_run_id"] for run in runs}
+    expected_total = len(expected_ids) if expected_ids else len(runs)
+    completed_total = len(set(expected_ids) & present_ids) if expected_ids else len(runs)
+    suite_status = f"> Suite status: {completed_total}/{expected_total} protocol runs completed."
+    if completed_total != expected_total:
+        suite_status += " Tables and figures include completed runs only."
     lines = [
-        f"# VisDrone 检测实验报告：{suite}",
+        f"# VisDrone detection experiment report: {suite}",
         "",
-        "本报告只汇总 `status=completed` 的真实运行记录。AP 数值均为百分数。这里的验证是由 VisDrone 标注转换得到的标准 YOLO 10 类评估；它没有实现官方 VisDrone 评测器对忽略区域的匹配规则，因此不能作为官方 VisDrone DET 榜单成绩。",
+        "This report aggregates only real records marked `status=completed`. AP values are percentages. Validation uses the converted ten-class YOLO labels and does not implement the official VisDrone ignored-region matching rules, so these values are not official VisDrone DET leaderboard scores.",
         "",
         suite_status,
         "",
-        "## 汇总结果",
+        "## Aggregate results",
         "",
-        "| 变体 | 运行数 | 种子 | Precision (%) | Recall (%) | AP50 (%) | AP50–95 (%) | 参数量 | Conv/Linear GFLOPs¹ | 验证器 inference (ms/图)² |",
+        "| Variant | Runs | Seeds | Precision (%) | Recall (%) | AP50 (%) | AP50–95 (%) | Parameters | Accounted GFLOPs¹ | Validator inference (ms/image)² |",
         "|---|---:|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
@@ -871,48 +936,60 @@ def build_markdown_report(
     lines.extend(
         [
             "",
-            "表中的 `±` 是多个种子之间的样本标准差。只有一个种子的变体仅报告单次观测值，没有不确定性估计，不能把它解释为稳定的模型差异。",
+            "`±` is the sample standard deviation across seeds. A one-seed result has no uncertainty estimate.",
             "",
-            "¹ GFLOPs 按 batch 1 的卷积和线性层 MACs×2 计算，包含固定 Gabor 卷积，不包含 BN、池化、激活、解码和 NMS。² inference 是 Ultralytics 验证器在批处理验证过程记录的每图阶段时间，不是隔离环境下的单图端到端延迟。",
+            "¹ The exact accounting method is recorded in each run's `gflops_method`; values are comparable only when that text agrees across the suite. ² Inference is the per-image stage time recorded by the batched Ultralytics validator, not isolated end-to-end single-image latency.",
             "",
-            "## 实际运行协议",
+        ]
+    )
+    if paired_deltas:
+        lines.extend(["## Paired AP50–95 deltas to baseline", "", "Each intervention is paired with the baseline trained with the same seed. Deltas are percentage points.", "", "| Variant | Paired seeds | Per-seed deltas (pp) | Mean ± sample SD (pp) |", "|---|---|---|---:|"])
+        for item in paired_deltas:
+            std = item["std_percent_points"]
+            aggregate = f"{item['mean_percent_points']:.2f} ± {std:.2f}" if std is not None else f"{item['mean_percent_points']:.2f}"
+            values = ", ".join(f"{value:+.2f}" for value in item["deltas_percent_points"])
+            seeds = ", ".join(str(seed) for seed in item["paired_seeds"])
+            lines.append(f"| {item['display_name']} | {seeds} | {values} | {aggregate} |")
+        lines.extend(["", "With three paired seeds, these descriptive mean and sample-SD summaries do not establish statistical significance.", ""])
+    lines.extend(
+        [
+            "## Actual run protocol",
             "",
         ]
     )
     first = runs[0]
     actual_fields = (
-        ("Epoch 预算", first.get("epochs")),
-        ("输入尺寸", first.get("imgsz")),
+        ("Epoch budget", first.get("epochs")),
+        ("Image size", first.get("imgsz")),
         ("Batch", first.get("batch")),
-        ("初始化", first.get("initialization")),
-        ("评估划分", first.get("evaluation_split")),
-        ("Checkpoint 选择", first.get("checkpoint_selection")),
+        ("Initialization", first.get("initialization")),
+        ("Evaluation split", first.get("evaluation_split")),
+        ("Checkpoint selection", first.get("checkpoint_selection")),
     )
-    lines.extend(["| 项目 | 运行记录值 |", "|---|---|"])
+    lines.extend(["| Item | Recorded value |", "|---|---|"])
     for label, value in actual_fields:
         if value is not None:
             lines.append(f"| {label} | {value} |")
     lines.extend(
         [
             "",
-            "优化器与增强等完整实际参数保存在各运行的 `metrics.json`；suite 的固定调用参数保存在 `protocol.json`。",
+            "Optimizer, augmentation, and other actual settings are stored in each run's `metrics.json`; fixed suite arguments are stored in `protocol.json`.",
             "",
-            "## 数据与可复现性",
+            "## Data and reproducibility",
             "",
-            "类别（源标注 1–10 映射到 YOLO 0–9）：" + "、".join(CLASS_NAMES) + "。",
+            "Classes (source labels 1–10 mapped to YOLO 0–9): " + ", ".join(CLASS_NAMES) + ".",
             "",
         ]
     )
     if manifest is None:
         lines.append(
-            "该 suite 未保存可读取的 `results/<suite>/data_snapshot/preparation_manifest.json` 数据快照，"
-            "因此没有写入数据计数或清单哈希；报告不会用当前 `data/` 下可能已经变化的清单代替。"
+            "This suite has no readable `data_snapshot/preparation_manifest.json`; the report does not substitute a possibly changed current data manifest."
         )
     else:
         content = manifest["content"]
-        lines.append(f"数据准备清单 SHA-256：`{manifest['sha256']}`。")
+        lines.append(f"Data-preparation manifest SHA-256: `{manifest['sha256']}`.")
         lines.append("")
-        lines.append("| 划分 | 原始划分 | 原图数 | 使用图数 | 保留框 | 丢弃行 | 裁剪框 | 文件列表 SHA-256 |")
+        lines.append("| Split | Source split | Source images | Used images | Kept boxes | Dropped rows | Clipped boxes | File-list SHA-256 |")
         lines.append("|---|---|---:|---:|---:|---:|---:|---|")
         for split in ("train", "val"):
             item = (content.get("splits") or {}).get(split)
@@ -927,19 +1004,19 @@ def build_markdown_report(
                 f"`{item.get('yolo_list_sha256', '—')}` |"
             )
     data_hashes = sorted({str(run.get("data_yaml_sha256")) for run in runs if run.get("data_yaml_sha256")})
-    lines.extend(["", "运行记录中的 dataset YAML SHA-256：" + ("、".join(f"`{value}`" for value in data_hashes) if data_hashes else "未记录。"), ""])
-    lines.append(f"训练代码 SHA-256：`{first['training_code_sha256']}`。")
+    lines.extend(["", "Dataset YAML SHA-256 recorded by runs: " + (", ".join(f"`{value}`" for value in data_hashes) if data_hashes else "not recorded."), ""])
+    lines.append(f"Training-code SHA-256: `{first['training_code_sha256']}`.")
     lines.append("")
-    lines.append("数据指纹（图像数及图像+标签 SHA-256）：")
+    lines.append("Data fingerprint (image counts and image-plus-label SHA-256):")
     lines.append("")
     lines.append("```json")
     lines.append(json.dumps(first["data_fingerprint"], indent=2, sort_keys=True))
     lines.append("```")
     environment_identity = first["environment_fingerprint"]
     lines.append("")
-    lines.append("核心软件环境：`" + json.dumps(environment_identity, sort_keys=True) + "`。")
+    lines.append("Core software environment: `" + json.dumps(environment_identity, sort_keys=True) + "`.")
     lines.append("")
-    lines.extend(["### 运行产物哈希", "", "| 运行 | metrics.json SHA-256 | checkpoint SHA-256 |", "|---|---|---|"])
+    lines.extend(["### Run artifact hashes", "", "| Run | metrics.json SHA-256 | Checkpoint SHA-256 |", "|---|---|---|"])
     for run in runs:
         lines.append(f"| {run['_run_id']} | `{sha256(run['_path'])}` | `{run.get('checkpoint_sha256', '—')}` |")
 
@@ -947,11 +1024,11 @@ def build_markdown_report(
         lines.extend(
             [
                 "",
-                "## 自然遮挡召回诊断",
+                "## Natural-occlusion recall diagnostic",
                 "",
-                "遮挡等级来自原始 VisDrone 标注字段。预测置信度阈值为 0.05，NMS IoU 为 0.50；按置信度降序进行类别一致、一对一的 IoU≥0.50 匹配，再按遮挡等级分层。下表是 ground-truth recall，不是 AP，也没有实现官方忽略区域匹配。`n` 是各层合格 GT 数；边界框大小如需分层，按原图像素面积计算（small < 32²、medium < 96²、large ≥ 96²）。",
+                "Occlusion levels come from the original VisDrone annotation field. Predictions use confidence 0.05 and NMS IoU 0.50, followed by confidence-ordered, class-aware, one-to-one matching at IoU ≥ 0.50. This is ground-truth recall rather than AP and does not implement official ignored-region matching.",
                 "",
-                "| 变体 | 诊断运行数 | 图像数 | 遮挡 0 Recall (%) | 遮挡 1 Recall (%) | 遮挡 2 Recall (%) |",
+                "| Variant | Diagnostic runs | Images | Occlusion 0 recall (%) | Occlusion 1 recall (%) | Occlusion 2 recall (%) |",
                 "|---|---:|---:|---:|---:|---:|",
             ]
         )
@@ -965,7 +1042,7 @@ def build_markdown_report(
                 cells.append(f"{value} (n={count})")
             image_count = row.get("evaluated_image_count", "—")
             if row.get("is_subset_smoke_run"):
-                image_count = f"{image_count}（subset smoke）"
+                image_count = f"{image_count} (subset smoke)"
             lines.append(
                 f"| {row['display_name']} | {row['run_count']} | {image_count} | "
                 + " | ".join(cells)
@@ -973,30 +1050,28 @@ def build_markdown_report(
             )
 
     if generated_plots:
-        lines.extend(["", "## 图表", ""])
+        lines.extend(["", "## Figures", ""])
         captions = {
-            "comparison.png": "基线与各单模块比较",
-            "learning_curves.png": "验证集 AP50–95 学习曲线",
-            "ablation.png": "完整模型、留一消融与随机滤波器对照",
-            "per_class_ap.png": "各类别 AP50–95",
-            "efficiency.png": "精度与参数量/计算量关系",
-            "occlusion_recall.png": "自然遮挡等级召回率",
+            "comparison.png": "Baseline and single-module comparison",
+            "learning_curves.png": "Validation AP50–95 learning curves",
+            "ablation.png": "Full model, leave-one-out ablations, and random-filter control",
+            "per_class_ap.png": "Per-class AP50–95",
+            "efficiency.png": "Accuracy versus parameters and accounted computation",
+            "occlusion_recall.png": "Natural-occlusion recall",
         }
         for filename in generated_plots:
             lines.extend([f"### {captions[filename]}", "", f"![{captions[filename]}](../../assets/{suite}/{filename})", ""])
 
-    expected = set(VARIANT_ORDER)
-    present = {row["variant"] for row in rows}
-    missing = sorted(expected - present, key=_variant_sort_key)
-    lines.extend(["## 解释限制", ""])
+    missing = [run_id for run_id in expected_ids if run_id not in present_ids]
+    lines.extend(["## Interpretation limits", ""])
     if missing:
-        lines.append("尚无完成结果的预定义变体：" + "、".join(DISPLAY_NAMES[name] for name in missing) + "。缺失比较不会被推断或补值。")
+        lines.append("Protocol runs without completed results: " + ", ".join(f"`{run_id}`" for run_id in missing) + ". Missing comparisons are neither inferred nor imputed.")
         lines.append("")
-    lines.append("所有模型均从随机初始化开始，并在固定但较短的 epoch 预算内训练。这样的试验适合验证代码路径和比较早期学习行为，不能证明模型已经收敛，也不能据此下结论说某个结构在充分训练后一定更优。")
+    lines.append("All models start from random initialization and use a fixed, short epoch budget. These experiments compare early learning under that budget; they do not establish convergence or performance after full training.")
     lines.append("")
-    lines.append("单模块试验回答“在基线上加入一个模块”的问题；留一消融回答“从完整组合中移除一个模块”的问题。两者的参照不同。`random_stem` 只用于检验固定 Gabor 滤波器相对同形状随机固定滤波器的作用，单独展示。")
+    lines.append("Single-module experiments ask what changes when one module is added to the baseline. Leave-one-out experiments use the full combination as their reference. These designs answer different questions.")
     if notices:
-        lines.extend(["", "## 未纳入的记录", ""])
+        lines.extend(["", "## Excluded records and notices", ""])
         lines.extend(f"- {notice}" for notice in notices)
     return "\n".join(lines) + "\n"
 
@@ -1041,6 +1116,18 @@ def generate_report(root: Path, suite: str) -> int:
         notice = "Suite protocol.json is missing; protocol snapshot provenance is unavailable."
         notices.append(notice)
         print(f"NOTICE: {notice}", file=sys.stderr)
+    protocol_variants = (
+        [str(value) for value in protocol["content"].get("variants") or []]
+        if protocol is not None
+        else []
+    )
+    if protocol_variants:
+        protocol_index = {name: index for index, name in enumerate(protocol_variants)}
+        rows.sort(key=lambda row: (protocol_index.get(row["variant"], len(protocol_index)), row["variant"]))
+    extension_suite = set(protocol_variants) == set(EXTENSION_ORDER)
+    comparison_order = protocol_variants if extension_suite else SINGLE_ORDER
+    learning_order = protocol_variants if extension_suite else None
+    paired_deltas = paired_baseline_deltas(runs) if "baseline" in protocol_variants else []
     if manifest is None:
         notice = "Suite data_snapshot/preparation_manifest.json is missing; current data manifest was not substituted."
         notices.append(notice)
@@ -1048,9 +1135,9 @@ def generate_report(root: Path, suite: str) -> int:
 
     assets_dir = root / "assets" / suite
     plotters = (
-        ("comparison.png", lambda path: plot_comparison(rows, path)),
-        ("learning_curves.png", lambda path: plot_learning_curves(runs, path)),
-        ("ablation.png", lambda path: plot_ablation(rows, path)),
+        ("comparison.png", lambda path: plot_comparison(rows, path, comparison_order)),
+        ("learning_curves.png", lambda path: plot_learning_curves(runs, path, learning_order)),
+        ("ablation.png", lambda path: False if extension_suite else plot_ablation(rows, path)),
         ("per_class_ap.png", lambda path: plot_per_class(runs, path)),
         ("efficiency.png", lambda path: plot_efficiency(rows, path)),
         (
@@ -1085,7 +1172,9 @@ def generate_report(root: Path, suite: str) -> int:
             "not isolated end-to-end single-image latency"
         ),
         "completed_run_count": len(runs),
+        "expected_run_ids": protocol_run_ids(protocol),
         "aggregates": rows,
+        "paired_ap50_95_deltas_to_baseline": paired_deltas,
         "occlusion_diagnostic": {
             "units": "recall percent",
             "confidence_threshold": 0.05,
@@ -1131,6 +1220,8 @@ def generate_report(root: Path, suite: str) -> int:
         occlusion_rows,
         generated_plots,
         notices,
+        protocol,
+        paired_deltas,
     )
     _atomic_text(suite_dir / "REPORT.md", report)
     print(f"Aggregated {len(runs)} completed runs into {suite_dir}")

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "modules": [
+    {
+      "local_classes": ["PartialConv3", "FasterBlock"],
+      "paper": "Run, Don't Walk: Chasing Higher FLOPS for Faster Neural Networks (CVPR 2023)",
+      "official_repository": "https://github.com/JierunChen/FasterNet",
+      "algorithm_crosscheck": "https://github.com/JierunChen/FasterNet/blob/e8fba4465ae912359c9f661a72b14e39347e4954/models/fasternet.py",
+      "commit": "e8fba4465ae912359c9f661a72b14e39347e4954",
+      "upstream_license": "No license file or license declaration was present in the official repository at the audited commit.",
+      "local_changes": [
+        "Independently implemented the paper's partial 3x3 convolution and residual pointwise MLP algorithm; no FasterNet source code is vendored.",
+        "Consulted the official implementation only to cross-check algorithm choices. Fixed n_div=4 and mlp_ratio=2; retained BatchNorm2d and ReLU.",
+        "Disabled DropPath and layer scale, removed timm and PyTorch Lightning dependencies, and preserved input channels and spatial size."
+      ]
+    },
+    {
+      "local_classes": ["StarBlock"],
+      "paper": "Rewrite the Stars (CVPR 2024)",
+      "official_repository": "https://github.com/ma-xu/Rewrite-the-Stars",
+      "source_file": "https://github.com/ma-xu/Rewrite-the-Stars/blob/c999eb50840a44f9f1d92e8f7d2c22cd645a6d5e/imagenet/starnet.py",
+      "commit": "c999eb50840a44f9f1d92e8f7d2c22cd645a6d5e",
+      "upstream_license": "Apache-2.0",
+      "retained_license": "licenses/Rewrite-the-Stars-Apache-2.0.txt",
+      "local_changes": [
+        "Extracted the official Block and fixed mlp_ratio=4.",
+        "Disabled DropPath, removed timm registration and initialization dependencies, and preserved the official ReLU6 multiplicative gate and convolution ordering.",
+        "Renamed the standalone adaptation StarBlock and added input validation."
+      ]
+    }
+  ]
+}

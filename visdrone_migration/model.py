@@ -8,12 +8,29 @@ from torch import nn
 from ultralytics.nn.tasks import DetectionModel
 from ultralytics.models.yolo.detect import DetectionTrainer
 from ultralytics.utils.torch_utils import fuse_conv_and_bn
-from .modules import C3k2, C3Ghost, Conv, EnhancedSPPF, GaborStem, SEBlock
+from ultralytics.nn.modules.block import C2f as DetectorC2f
+from .modules import C3k2, C3Ghost, Conv, EnhancedSPPF, GaborStem, SEBlock, GhostConv
+from .classic_blocks import FasterBlock, StarBlock
+from .spatial_blocks import WTBlock, LSConv
 
 FACTORS = ("c3k2", "ghost", "se", "sppf", "gabor")
 VARIANTS = {"baseline": (), **{name: (name,) for name in FACTORS}, "full": FACTORS,
             **{f"without_{name}": tuple(x for x in FACTORS if x != name) for name in FACTORS},
             "random_stem": ("random",)}
+NEW_VARIANTS = ("ghostconv", "pconv", "star", "wtconv", "lsconv")
+VARIANTS.update({name: (name,) for name in NEW_VARIANTS})
+
+
+class EfficientC2f(DetectorC2f):
+    """Preserve the YOLO C2f projections/depth and replace its internal units."""
+    def __init__(self, original, kind):
+        nn.Module.__init__(self)
+        self.kind = kind
+        self.c = original.c
+        self.cv1, self.cv2 = original.cv1, original.cv2
+        block = {"pconv": FasterBlock, "star": StarBlock,
+                 "wtconv": WTBlock, "lsconv": LSConv}[kind]
+        self.m = nn.ModuleList(block(self.c) for _ in original.m)
 
 
 class AttentionStage(nn.Module):
@@ -70,6 +87,21 @@ class MigratedDetectionModel(DetectionModel):
         if "se" in factors:
             replace(2, lambda old: AttentionStage(old, old.cv2.conv.out_channels))
 
+        if "ghostconv" in factors:
+            def downsample_ghost(old):
+                block = GhostConv(old.conv.in_channels, old.conv.out_channels,
+                                  k=old.conv.kernel_size[0], s=old.conv.stride[0], act=nn.SiLU())
+                # Match the unchanged YOLO activation and BatchNorm configuration.
+                for submodule in block.modules():
+                    if isinstance(submodule, nn.BatchNorm2d):
+                        submodule.eps, submodule.momentum = old.bn.eps, old.bn.momentum
+                return block
+            for index in (1, 3, 5, 7):
+                replace(index, downsample_ghost)
+        if variant in ("pconv", "star", "wtconv", "lsconv"):
+            for index in (4, 6, 8):
+                replace(index, lambda old: EfficientC2f(old, variant))
+
     def fuse(self, verbose=True):
         # Upstream recognizes only its own Conv class. Apply the same inference
         # optimization to migrated Conv blocks for comparable validation timing.
@@ -79,6 +111,15 @@ class MigratedDetectionModel(DetectionModel):
                 module.conv = fuse_conv_and_bn(module.conv, module.bn)
                 delattr(module, "bn")
                 module.forward = module.forward_fuse
+        # New reference blocks express Conv-BN pairs as ordinary Sequential
+        # modules. Give them the same inference fusion as the original arms.
+        for sequence in tuple(self.model.modules()):
+            if isinstance(sequence, nn.Sequential):
+                children = list(sequence._modules.items())
+                for (conv_key, conv), (bn_key, bn) in zip(children, children[1:]):
+                    if isinstance(conv, nn.Conv2d) and isinstance(bn, nn.BatchNorm2d):
+                        sequence._modules[conv_key] = fuse_conv_and_bn(conv, bn)
+                        sequence._modules[bn_key] = nn.Identity()
         if verbose:
             self.info(verbose=True)
         return self

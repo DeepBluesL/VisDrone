@@ -105,7 +105,7 @@ def main():
         "speed_ms": {k: float(v) for k, v in metric.speed.items()},
         "parameters": params, "trainable_parameters": trainable,
         "gflops_at_imgsz": convolution_linear_gflops(trainer.model, args.imgsz),
-        "gflops_method": "Convolution and linear MACs x 2, batch 1, includes fixed Gabor bank; excludes BN, pooling, activation, decode and NMS",
+        "gflops_method": "Convolution and linear MACs x 2, batch 1, includes fixed Gabor/Haar analysis and synthesis plus LS dynamic spatial MACs; excludes normalization, pooling, activation, elementwise gates/scales, decode and NMS; not total hardware FLOPs",
         "training_and_final_validation_seconds": elapsed,
         "peak_cuda_reserved_gb": torch.cuda.max_memory_reserved() / 1e9 if torch.cuda.is_available() else None,
         "data_yaml_sha256": sha256(args.data), "checkpoint_sha256": sha256(trainer.best),

@@ -3,6 +3,7 @@ from copy import deepcopy
 import torch
 from torch import nn
 from .modules import GaborStem
+from .spatial_blocks import HaarWTConv, DynamicSmallKernel
 
 
 def convolution_linear_gflops(model, imgsz):
@@ -21,9 +22,18 @@ def convolution_linear_gflops(model, imgsz):
             # Projection Conv/BN are separate children; only count fixed F.conv2d here.
             n, c, h, w = inputs[0].shape
             operations.append(2 * n * 32 * ((h + 1) // 2) * ((w + 1) // 2) * c * 5 * 5)
+        elif isinstance(module, HaarWTConv):
+            n, c, h, w = inputs[0].shape
+            for _ in range(module.levels):
+                h, w = (h + 1) // 2, (w + 1) // 2
+                # Both fixed 2x2 analysis and transposed-convolution synthesis:
+                # 4 bands/channel, 4 coefficients/band, 2 FLOPs/MAC.
+                operations.append(2 * 2 * n * c * 4 * h * w * 4)
+        elif isinstance(module, DynamicSmallKernel):
+            operations.append(2 * output.numel() * 9)
 
     for module in candidate.modules():
-        if isinstance(module, (nn.Conv2d, nn.Linear, GaborStem)):
+        if isinstance(module, (nn.Conv2d, nn.Linear, GaborStem, HaarWTConv, DynamicSmallKernel)):
             hooks.append(module.register_forward_hook(count))
     try:
         with torch.no_grad():
