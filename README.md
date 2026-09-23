@@ -1,106 +1,239 @@
-# VisDrone: migrating occluded-MNIST modules to object detection
+# VisDrone module migration experiments
 
-将原 MNIST 遮挡比较模型中的实际使用模块迁移到 **VisDrone2019-DET 十类目标检测**。
-基于 YOLOv8n 检测框架，比较 C3k2、C3Ghost、SE、EnhancedSPPF 和修正后的 Gabor
-滤波器，提供单模块、完整组合、逐项移除及随机滤波器对照。
+This repository studies whether feature-extraction modules from an occluded-MNIST
+project transfer usefully to ten-class object detection on VisDrone2019-DET. The
+detector uses the YOLOv8n training, detection-head, localization, classification,
+and distribution-focal-loss machinery. The MNIST comparison head, global pooling,
+left/right label swapping, and feature-norm ranking loss were intentionally left
+behind because they do not define a corresponding object-detection intervention.
 
-本项目迁移特征提取模块，使用检测框架的定位、分类和 DFL 损失。
-MNIST 的数字比较头、全局池化、左右交换标签和特征范数排序损失不适用于该检测任务。
+The repository contains two experiment generations:
 
-## 已完成的实验
+- The completed 13-arm `pilot` migration study evaluates the modules that were
+  active in the original course model, plus ablations and a matched random-filter
+  control.
+- The six-arm `module_extension` study compares five additional efficient-module interventions with
+  a freshly trained baseline. It is currently **in progress**; no extension
+  metrics are reported yet.
 
-**13/13 组已实际训练完成**：固定 2,048 张训练图、全部 548 张验证图，每组 10 epochs，
-输入 512，batch 16，seed 179，从零训练。全部 8,629 张 train/val/test-dev 原始图片已下载，
-test-dev 未参与训练或模型选择。[下载与校验记录](results/data/source_provenance.json)
+Implementation details for the extension modules are documented in
+[NEW_MODULES.md](docs/NEW_MODULES.md). Source attribution and licenses are recorded
+in [ATTRIBUTION.md](docs/ATTRIBUTION.md),
+[classic_module_sources.json](docs/classic_module_sources.json), and
+[WTConv](docs/wtconv_sources.json) and [LSConv](docs/lsconv_sources.json) source
+records.
 
-| 配置 | mAP50 (%) | mAP50–95 (%) | 参数量 |
+## Completed pilot: protocol and results
+
+All 13 pilot runs completed under one fixed protocol: 2,048 training images, all
+548 validation images, 10 epochs, 512-pixel input, batch size 16, seed 179, and
+training from scratch. The downloaded source data contain all 8,629 images across
+train, validation, and test-dev; test-dev was not used for training, checkpoint
+selection, or reported metrics. Dataset provenance is stored in
+[source_provenance.json](results/data/source_provenance.json).
+
+AP values below are percentages. The preregistered primary metric is validation
+AP50-95.
+
+| Pilot arm | AP50 | AP50-95 | Parameters |
 | --- | ---: | ---: | ---: |
-| 基线 YOLOv8n | 9.64 | 4.47 | 3,012,798 |
-| Gabor 单模块 | 10.30 | 4.87 | 3,012,878 |
-| 同结构固定随机滤波器 | **10.49** | **4.99** | 3,012,878 |
-| 五模块完整组合 | 8.76 | 4.04 | 2,497,232 |
+| Baseline | 9.643 | 4.471 | 3,012,798 |
+| C3k2 | 9.145 | 4.249 | 3,010,478 |
+| Ghost | 8.484 | 3.859 | 2,499,310 |
+| SE | 9.447 | 4.386 | 3,012,960 |
+| Enhanced SPPF | 9.159 | 4.200 | 3,012,798 |
+| Gabor stem | 10.296 | 4.866 | 3,012,878 |
+| Full five-module model | 8.764 | 4.044 | 2,497,232 |
+| Full minus C3k2 | 9.083 | 4.194 | 2,499,552 |
+| Full minus Ghost | 8.506 | 4.119 | 3,010,720 |
+| Full minus SE | 8.288 | 3.726 | 2,497,070 |
+| Full minus Enhanced SPPF | 8.953 | 4.069 | 2,497,232 |
+| Full minus Gabor | 8.421 | 3.853 | 2,497,152 |
+| Matched random-filter stem | **10.491** | **4.991** | 3,012,878 |
 
-本轮最高分来自随机滤波器对照，不能将 Gabor 相对基线的提升解释为 Gabor 先验的独特收益。
-完整组合参数量减少约 17.1%，但 mAP50–95 低于基线约 0.43 个百分点。
-这些是短程单种子的开发集观测，未证明充分训练后的排序或统计显著性。
+The random-filter control produced the highest AP50-95 in this run. Gabor exceeded
+the baseline by 0.395 percentage points, but the matched random filters exceeded
+Gabor by 0.125 points. The evidence therefore does not isolate a benefit from the
+Gabor prior itself. It suggests only that the fixed-filter stem intervention may
+have helped under this particular short training budget.
 
-[完整结果与消融报告](results/pilot/REPORT.md) · [指标 CSV](results/pilot/summary.csv) ·
-[实验发现](docs/FINDINGS.md) · [13 组权重](checkpoints/pilot) ·
-[权重及记录独立复核](results/pilot/verification.json) ·
-[测试记录](results/pilot/validation.json) · [发布产物 SHA-256 清单](results/artifact_manifest.json)
+The full model used about 17.1% fewer parameters and 10.7% fewer counted
+convolution/linear FLOPs than the baseline, while its AP50-95 was 0.428 points
+lower. In the leave-one-out runs, removing SE or Gabor reduced the full model's
+score, while removing C3k2, Ghost, or Enhanced SPPF increased it slightly. These
+are context-dependent interactions within the combined model, not independent
+module effects.
 
-![基线与五种单模块的真实精度对比](assets/pilot/comparison.png)
+The complete evidence is available in the [generated report](results/pilot/REPORT.md),
+[summary CSV](results/pilot/summary.csv), [research findings](docs/FINDINGS.md),
+[verification record](results/pilot/verification.json), and
+[artifact manifest](results/artifact_manifest.json). The released checkpoints are
+under `checkpoints/pilot/`.
 
-![完整组合、逐项移除和随机滤波器对照](assets/pilot/ablation.png)
+![Baseline and completed single-module comparisons](assets/pilot/comparison.png)
 
-![自然遮挡分组召回率](assets/pilot/occlusion_recall.png)
+![Full-model ablations and fixed-filter control](assets/pilot/ablation.png)
 
-![同一组验证图片上的基线、完整组合和最佳配置检测结果](assets/pilot/predictions.png)
+![Recall grouped by natural occlusion level](assets/pilot/occlusion_recall.png)
 
-## 实验矩阵
+![Predictions from the baseline, full model, and best pilot arm](assets/pilot/predictions.png)
 
-| 分组 | 配置 |
+## What was migrated
+
+The pilot deliberately migrated feature extraction rather than the entire MNIST
+task. Its interventions occupy different architectural locations:
+
+| Factor | Detector intervention |
 | --- | --- |
-| 基线 | YOLOv8n，十类输出，从零训练 |
-| 单模块 × 5 | C3k2 / Ghost / SE / EnhancedSPPF / Gabor |
-| 全部组合 | 五种模块同时使用 |
-| 消融 × 5 | 全部组合中逐个移除一种模块 |
-| 滤波器对照 | 与 Gabor 完全相同结构的固定随机滤波器 |
+| C3k2 | Replace the early backbone C2f at layer 2 |
+| Ghost | Replace backbone C2f stages at layers 4, 6, and 8 |
+| SE | Apply channel attention after the layer-2 backbone block |
+| Enhanced SPPF | Replace the backbone SPPF at layer 9 |
+| Gabor | Replace the input stem with a fixed analytic filter bank plus learned projection |
+| Random control | Use the same stem shape and normalization with fixed seeded random filters |
 
-每组使用相同训练图片、验证图片、优化器、图像尺寸、训练轮数和随机种子。
-相同位置的迁移模块使用独立且一致的初始化种子；未改动的检测头具有相同初始权重。
-原始代码的 LeakyReLU 和局部 BatchNorm 默认设置保留，因此实验比较的是整个模块实现。
+This placement difference is a real experimental confound: the pilot compares
+complete interventions, not one interchangeable operator inserted at one common
+site. Some variants also replace an entire C2f wrapper while others wrap or replace
+only a stem or pooling stage. Parameter count, receptive field, normalization,
+depth, and optimization path can therefore change together.
 
-## 运行
+The extension study narrows this issue. PConv, Star, WTConv, and large-small
+convolution blocks replace the internal units of otherwise retained C2f wrappers
+at backbone layers 4, 6, and 8. The GhostConv arm instead replaces four stride-2
+downsampling convolutions, so comparisons involving GhostConv still include a
+placement and wrapper difference. See [NEW_MODULES.md](docs/NEW_MODULES.md) for the
+exact definitions and source provenance.
 
-建议 Python 3.10，先安装适配 GPU 的 PyTorch / torchvision，再安装：
+## The original Gabor initialization bug
 
-```bash
-python -m pip install -r requirements.txt
-python -m unittest discover -s tests -v
-python scripts/download_data.py
-python scripts/prepare_data.py --train-limit 2048 --seed 179
-python scripts/run_suite.py --suite pilot_reproduction --epochs 10 --imgsz 512 --batch 16 --seeds 179 --expected-train 2048 --expected-val 548
-python scripts/report.py --suite pilot_reproduction
+In the historical MNIST code, the Gabor convolution weights were created and
+frozen, but a later generic model initializer applied Xavier initialization to
+convolution modules. Setting `requires_grad=False` prevents optimizer updates; it
+does not protect a tensor from an explicit initialization function. Consequently,
+the layer described as Gabor no longer contained the intended analytic filters by
+the time training began.
+
+This migration corrects that problem by storing the analytic bank as a persistent
+buffer and applying it with a functional convolution before a learned projection.
+Generic module initialization and optimizers cannot overwrite that buffer. A
+normalized fixed random bank with identical shape provides the necessary control.
+Because this is a correction, the detector experiment does not reproduce the
+historical MNIST checkpoint's actual computation.
+
+## Module extension study: in progress
+
+The planned matrix contains six arms: `baseline`, `ghostconv`, `pconv`, `star`,
+`wtconv`, and `lsconv`. Every arm is being trained from scratch for 10 epochs on
+the same 2,048 training images and 548 validation images, at image size 512 and
+batch size 16, using seeds 179, 2026, and 3407. The baseline is rerun under the new
+code rather than copied from the pilot, because code identity is part of the
+experimental protocol.
+
+| Extension arm | Seeds completed | AP50-95 mean ± sample SD | Status |
+| --- | ---: | ---: | --- |
+| Baseline | — | — | In progress |
+| GhostConv | — | — | In progress |
+| PConv / FasterBlock | — | — | In progress |
+| StarBlock | — | — | In progress |
+| WTConv | — | — | In progress |
+| LSConv (large-small convolution) | — | — | In progress |
+
+No placeholder metric should be interpreted as a result. This table will be filled
+only from completed, fingerprint-validated records in `results/module_extension/`.
+With three seeds, the report will show the sample standard deviation as a compact
+description of run-to-run variation. Three observations are too few to support a
+reliable normal-theory 95% confidence interval, so SD must not be presented as one.
+
+## Reproducing the experiments
+
+Use the repository virtual environment explicitly. On Windows PowerShell:
+
+```powershell
+py -3.10 -m venv .venv
+# Install a CUDA-enabled PyTorch build suitable for your GPU in this environment first.
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv\Scripts\python.exe scripts\download_data.py
+.\.venv\Scripts\python.exe scripts\prepare_data.py --train-limit 2048 --seed 179
 ```
 
-发布的结果保存在 `pilot`；复现实验使用新的 `pilot_reproduction` 名称，避免覆盖已归档结果。
-运行路径和依赖版本也参与协议核验，因此不同机器上的新实验应使用独立 suite。
+The archived pilot was produced from source commit `af2026e`. Current core code
+contains the extension modules, so it has a different training fingerprint and
+must not be used to append runs to the archived `pilot` suite. Create an isolated
+worktree at the recorded source commit and use a fresh suite name:
 
-复核发布权重，并重建定性图和遮挡诊断：
-
-```bash
-python scripts/verify_results.py --suite pilot --expected-runs 13
-python scripts/visualize_predictions.py --weights checkpoints/pilot/baseline_s179.pt checkpoints/pilot/full_s179.pt checkpoints/pilot/random_stem_s179.pt --labels baseline full random_stem --output assets/pilot/predictions.png
-python scripts/evaluate_occlusion.py --weights checkpoints/pilot/baseline_s179.pt --output results/pilot/baseline_s179/occlusion.json
+```powershell
+git worktree add ..\VisDrone-pilot-reproduction af2026e
+Push-Location ..\VisDrone-pilot-reproduction
+py -3.10 -m venv .venv
+# Install a CUDA-enabled PyTorch build suitable for your GPU first.
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts\prepare_data.py --raw-root ..\VisDrone\data\raw --train-limit 2048 --seed 179
+.\.venv\Scripts\python.exe scripts\run_suite.py --suite pilot_reproduction --epochs 10 --imgsz 512 --batch 16 --seeds 179 --expected-train 2048 --expected-val 548
+.\.venv\Scripts\python.exe scripts\report.py --suite pilot_reproduction
+Pop-Location
 ```
 
-遮挡诊断对每一组权重重复同一命令，并使用相应结果目录；随后运行 `report.py` 重新汇总。
-召回率阈值固定为置信度 0.05、匹配 IoU 0.5，图像选择与预测无关。
+The extension suite uses the current source and a new archive name:
 
-`--train-limit 0` 使用完整的 6,471 张训练图片；默认验证集始终为官方 548 张。
-下载脚本还下载 1,610 张 test-dev 图片，但首轮实验不使用 test-dev 选择模型。
-全部原始数据仅保存在 `data/`，不进入 Git。
-
-更长训练与多种子实验（以下为配置示例，不代表已完成）：
-
-```bash
-python scripts/prepare_data.py --train-limit 0 --seed 179
-python scripts/run_suite.py --suite full_100ep --epochs 100 --imgsz 640 --batch 16 --seeds 179 2026 3407 --expected-train 6471 --expected-val 548
-python scripts/report.py --suite full_100ep
+```powershell
+.\.venv\Scripts\python.exe scripts\run_suite.py --suite module_extension_reproduction --variants baseline ghostconv pconv star wtconv lsconv --epochs 10 --imgsz 512 --batch 16 --seeds 179 2026 3407 --expected-train 2048 --expected-val 548
+.\.venv\Scripts\python.exe scripts\postprocess_suite.py --suite module_extension_reproduction --check-current-code
 ```
 
-数据准备改变后应使用新的 suite 名称。训练和验证都通过命令行数据 YAML 指定。
-`run_suite.py` 会核对上述预期图片数，并把实际 dataset YAML、数据准备清单、数据内容指纹、
-训练代码指纹和依赖版本保存在 `results/<suite>/`；任何一项改变都会拒绝复用该 suite。
-`runs/` 保存完整训练输出；`results/` 保存可提交的指标和逐轮 CSV；
-`checkpoints/` 保存各组最佳验证权重；`assets/` 保存由真实指标生成的图。
+The published extension run uses `module_extension`; reproduction uses
+`module_extension_reproduction` so immutable evidence is never silently reused or
+overwritten. `run_suite.py` verifies dataset counts and records the dataset YAML,
+preparation manifest, data-content fingerprint, training-code fingerprint, and
+environment versions. If any identity field differs, it refuses to reuse the
+suite. `runs/` stores complete trainer output, `results/` stores metrics and epoch
+CSVs, `checkpoints/` stores the selected validation checkpoints, and `assets/`
+contains plots generated from recorded results.
 
-## 解读限制
+To verify the archived pilot evidence and regenerate diagnostics:
 
-短程、单种子、从零训练的实验用于检查模块迁移与固定预算下的表现，不能证明收敛后的优劣。
-主指标是 **YOLO 转换标注上的 mAP50–95**，范围为 0–1，图表显示百分数。
-转换排除 ignored region、score=0 和非目标类别，但验证器没有实现官方 VisDrone 的忽略区域匹配，
-因此这里的分数不能直接作为官方挑战榜单分数。验证集同时用于挑选最佳 epoch，未声称独立测试成绩。
+```powershell
+.\.venv\Scripts\python.exe scripts\verify_results.py --suite pilot --expected-runs 13
+.\.venv\Scripts\python.exe scripts\visualize_predictions.py --weights checkpoints\pilot\baseline_s179.pt checkpoints\pilot\full_s179.pt checkpoints\pilot\random_stem_s179.pt --labels baseline full random_stem --output assets\pilot\predictions.png
+.\.venv\Scripts\python.exe scripts\evaluate_occlusion.py --weights checkpoints\pilot\baseline_s179.pt --output results\pilot\baseline_s179\occlusion.json
+```
 
-来源与许可见 [ATTRIBUTION](docs/ATTRIBUTION.md)。代码采用 AGPL-3.0；数据遵循原数据集条款。
+The occlusion diagnostic uses confidence 0.05 and matching IoU 0.5. Image
+selection does not depend on predictions. Run it separately for each checkpoint
+and regenerate the report after all records are present.
+
+To use all 6,471 training images for a later study, prepare the data with
+`--train-limit 0` and choose another suite name. The 1,610 downloaded test-dev
+images remain excluded unless a separate evaluation protocol explicitly uses
+them.
+
+## Interpretation and research reflection
+
+The pilot is an engineering and hypothesis-generation study under a fixed small
+budget. Ten epochs from scratch are not a convergence study. Twelve of the 13
+pilot arms selected their checkpoint at epoch 10, which is direct evidence that
+the observed ranking may reflect early optimization speed rather than stable
+final performance. The validation set is used both for checkpoint selection and
+reporting, and there is no independent test score.
+
+The pilot also has only one seed. Differences of a few tenths of a percentage
+point therefore have no uncertainty estimate and must not be called statistically
+significant. The three-seed extension improves visibility into seed sensitivity,
+but its sample SD remains descriptive and is not a 95% confidence interval.
+
+The primary metric is AP50-95 on ten-class labels converted to YOLO format. The
+conversion excludes ignored regions, score-zero annotations, and non-target
+categories, while the validator does not implement the official VisDrone ignored-
+region matching behavior. These numbers must not be presented as official
+VisDrone challenge scores.
+
+The strongest lesson from the pilot is methodological. A named prior should be
+tested against a matched structural control: without the random-filter arm, the
+Gabor result could easily have been overinterpreted. Likewise, module comparisons
+need aligned placement and wrappers before architectural names can explain an
+observed difference. Longer training, more seeds, a held-out evaluation protocol,
+and controlled insertion points are required before making performance claims.
+
+The code is distributed under AGPL-3.0. VisDrone images and annotations retain
+their original dataset terms and are not bundled in this repository.

@@ -1,0 +1,21 @@
+{
+  "repository": "BGU-CS-VIL/WTConv",
+  "commit": "4a84da2218924b3973de2235d641f2ecf969c346",
+  "files": [
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/BGU-CS-VIL/WTConv/4a84da2218924b3973de2235d641f2ecf969c346/LICENSE",
+      "sha256": "d978d35d1d560ce315b3ab6c946ec848ed08c9ffcecedba4cdc032933fee5c27"
+    },
+    {
+      "path": "wtconv/util/wavelet.py",
+      "url": "https://raw.githubusercontent.com/BGU-CS-VIL/WTConv/4a84da2218924b3973de2235d641f2ecf969c346/wtconv/util/wavelet.py",
+      "sha256": "eff13d7c58e771d0cd11ce9599b19995417f177684ceef114e0559bb63056308"
+    },
+    {
+      "path": "wtconv/wtconv2d.py",
+      "url": "https://raw.githubusercontent.com/BGU-CS-VIL/WTConv/4a84da2218924b3973de2235d641f2ecf969c346/wtconv/wtconv2d.py",
+      "sha256": "0a5baf5c82522925f7b227db26aa5e7b97d784c5d66ced9071f83213cb0d8fb5"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "repository": "THU-MIG/lsnet",
+  "commit": "cbe737c92b7c43ecf02d08545a07f03f1010177c",
+  "files": [
+    {
+      "path": "detection/model/lsnet.py",
+      "url": "https://raw.githubusercontent.com/THU-MIG/lsnet/cbe737c92b7c43ecf02d08545a07f03f1010177c/detection/model/lsnet.py",
+      "sha256": "6f1c696133e179a5257d4b5fe55e00751ad067149f5616571bb5f150bb9baf66"
+    },
+    {
+      "path": "detection/model/ska.py",
+      "url": "https://raw.githubusercontent.com/THU-MIG/lsnet/cbe737c92b7c43ecf02d08545a07f03f1010177c/detection/model/ska.py",
+      "sha256": "bbecab07312699f5c3984234a46662052a37687cf863086237ceb32b2aba1da6"
+    },
+    {
+      "path": "model/lsnet.py",
+      "url": "https://raw.githubusercontent.com/THU-MIG/lsnet/cbe737c92b7c43ecf02d08545a07f03f1010177c/model/lsnet.py",
+      "sha256": "f6fbe61695d3a257df8bcf04beebdea9929bae804ab86ed9975448dce948a419"
+    },
+    {
+      "path": "model/ska.py",
+      "url": "https://raw.githubusercontent.com/THU-MIG/lsnet/cbe737c92b7c43ecf02d08545a07f03f1010177c/model/ska.py",
+      "sha256": "bbecab07312699f5c3984234a46662052a37687cf863086237ceb32b2aba1da6"
+    },
+    {
+      "path": "segmentation/model/lsnet.py",
+      "url": "https://raw.githubusercontent.com/THU-MIG/lsnet/cbe737c92b7c43ecf02d08545a07f03f1010177c/segmentation/model/lsnet.py",
+      "sha256": "dc7c062ab8e9d485f7bc36cc615f0b6dd2bd8633cfc5e0ef19d718b421ce36b2"
+    },
+    {
+      "path": "segmentation/model/ska.py",
+      "url": "https://raw.githubusercontent.com/THU-MIG/lsnet/cbe737c92b7c43ecf02d08545a07f03f1010177c/segmentation/model/ska.py",
+      "sha256": "bbecab07312699f5c3984234a46662052a37687cf863086237ceb32b2aba1da6"
+    }
+  ]
+}

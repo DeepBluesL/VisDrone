@@ -18,6 +18,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -603,6 +604,78 @@ def plot_efficiency(rows: Sequence[dict[str, Any]], path: Path) -> bool:
     return True
 
 
+def plot_paired_deltas(
+    paired: Sequence[dict[str, Any]], path: Path
+) -> bool:
+    """Plot same-seed AP50-95 deltas and descriptive mean ± sample SD."""
+    usable = [item for item in paired if item.get("deltas_percent_points")]
+    if not usable:
+        return False
+    fig, ax = plt.subplots(figsize=(max(8.5, 1.45 * len(usable) + 3.0), 5.8))
+    palette = plt.get_cmap("tab10")
+    seed_colors: dict[int, Any] = {}
+    for item in usable:
+        for seed in item["paired_seeds"]:
+            if seed not in seed_colors:
+                seed_colors[seed] = palette(len(seed_colors) % 10)
+    for position, item in enumerate(usable):
+        pairs = list(zip(item["paired_seeds"], item["deltas_percent_points"]))
+        local_offsets = (
+            [0.0]
+            if len(pairs) == 1
+            else [-0.18 + 0.36 * index / (len(pairs) - 1) for index in range(len(pairs))]
+        )
+        for offset, (seed, delta) in zip(local_offsets, pairs):
+            ax.scatter(
+                position + offset,
+                delta,
+                s=48,
+                color=seed_colors[seed],
+                edgecolor="white",
+                linewidth=0.6,
+                zorder=3,
+            )
+        standard_deviation = item.get("std_percent_points")
+        ax.errorbar(
+            position,
+            item["mean_percent_points"],
+            yerr=standard_deviation,
+            fmt="D",
+            color="#202020",
+            markerfacecolor="white",
+            markersize=6,
+            capsize=5,
+            linewidth=1.5,
+            zorder=4,
+        )
+    ax.axhline(0.0, color="#555555", linewidth=1.0, linestyle="--")
+    ax.set_xticks(
+        range(len(usable)),
+        [f"{item['display_name']}\n(n={len(item['paired_seeds'])})" for item in usable],
+    )
+    ax.set_ylabel("AP50–95 delta to same-seed baseline (percentage points)")
+    ax.set_title("Paired module deltas by seed; diamonds show mean ± sample SD (not CI)")
+    ax.grid(axis="y", color="#d9d9d9", linewidth=0.8, alpha=0.8)
+    ax.set_axisbelow(True)
+    handles = [
+        Line2D(
+            [], [], marker="o", linestyle="none", color=color,
+            markeredgecolor="white", label=f"Seed {seed}", markersize=7,
+        )
+        for seed, color in seed_colors.items()
+    ]
+    handles.append(
+        Line2D(
+            [], [], marker="D", linestyle="none", color="#202020",
+            markerfacecolor="white", label="Mean ± sample SD", markersize=7,
+        )
+    )
+    ax.legend(handles=handles, frameon=False, ncol=min(4, len(handles)))
+    fig.tight_layout()
+    _save_figure(fig, path)
+    return True
+
+
 def load_occlusion_results(
     runs: Sequence[dict[str, Any]], root: Path = ROOT
 ) -> tuple[list[dict[str, Any]], list[str]]:
@@ -950,7 +1023,13 @@ def build_markdown_report(
             values = ", ".join(f"{value:+.2f}" for value in item["deltas_percent_points"])
             seeds = ", ".join(str(seed) for seed in item["paired_seeds"])
             lines.append(f"| {item['display_name']} | {seeds} | {values} | {aggregate} |")
-        lines.extend(["", "With three paired seeds, these descriptive mean and sample-SD summaries do not establish statistical significance.", ""])
+        pair_counts = sorted({len(item["paired_seeds"]) for item in paired_deltas})
+        count_text = ", ".join(str(value) for value in pair_counts)
+        lines.extend([
+            "",
+            f"These descriptive summaries use {count_text} paired seed(s) per reported intervention and do not establish statistical significance.",
+            "",
+        ])
     lines.extend(
         [
             "## Actual run protocol",
@@ -1057,6 +1136,7 @@ def build_markdown_report(
             "ablation.png": "Full model, leave-one-out ablations, and random-filter control",
             "per_class_ap.png": "Per-class AP50–95",
             "efficiency.png": "Accuracy versus parameters and accounted computation",
+            "paired_deltas.png": "Same-seed AP50–95 deltas to baseline",
             "occlusion_recall.png": "Natural-occlusion recall",
         }
         for filename in generated_plots:
@@ -1128,6 +1208,10 @@ def generate_report(root: Path, suite: str) -> int:
     comparison_order = protocol_variants if extension_suite else SINGLE_ORDER
     learning_order = protocol_variants if extension_suite else None
     paired_deltas = paired_baseline_deltas(runs) if "baseline" in protocol_variants else []
+    if protocol_variants:
+        paired_deltas.sort(
+            key=lambda item: protocol_index.get(item["variant"], len(protocol_index))
+        )
     if manifest is None:
         notice = "Suite data_snapshot/preparation_manifest.json is missing; current data manifest was not substituted."
         notices.append(notice)
@@ -1140,6 +1224,10 @@ def generate_report(root: Path, suite: str) -> int:
         ("ablation.png", lambda path: False if extension_suite else plot_ablation(rows, path)),
         ("per_class_ap.png", lambda path: plot_per_class(runs, path)),
         ("efficiency.png", lambda path: plot_efficiency(rows, path)),
+        (
+            "paired_deltas.png",
+            lambda path: plot_paired_deltas(paired_deltas, path) if extension_suite else False,
+        ),
         (
             "occlusion_recall.png",
             lambda path: plot_occlusion_recall(occlusion_rows, path),
