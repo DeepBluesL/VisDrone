@@ -18,15 +18,28 @@ The repository contains three experiment generations:
   longer training, and resolution/P2 comparisons. Its current status is recorded below.
 
 <!-- realtime-stage1:start -->
-## Full-data real-time optimization: preparation
+## Full-data real-time optimization: training in progress
 
-The next screening study trains standard YOLOv8n at 512, 768, and 1024 pixels,
+The running screening study trains standard YOLOv8n at 512, 768, and 1024 pixels,
 and YOLOv8n-P2 at 768 and 1024 pixels, for 100 epochs each (seed 179).
 It uses all 6,471 training and 548 validation images and an official COCO checkpoint.
-Training throughput is being profiled on the RTX 5090 D before freezing batch and worker settings.
-No completed full-budget accuracy result is claimed at this preparation stage.
+The frozen RTX 5090 D recipe uses eight data workers, decoded disk caching, AMP,
+physical batch 64 (32 for P2/1024), and effective batch 64 via accumulation.
+Validation batch is 32 for every arm. Measured standard/512 training throughput rose
+from approximately 236 images/s at batch 16 to 493 images/s at batch 64.
+The heavier selected configurations averaged approximately 73–81% GPU utilization.
+These are throughput profiles; full-budget accuracy results are still pending.
 
-See [the experiment design and execution notes](docs/REALTIME_OPTIMIZATION.md).
+The queue was launched on September 27, 2026. It runs the five arms sequentially,
+records each epoch, refreshes the report every ten epochs, and benchmarks each completed
+checkpoint. After all runs pass verification, it updates the English report and README,
+archives the results, and pushes them to this repository. A failed run stops publication.
+The [report](results/realtime_stage1/REPORT.md) is a repository snapshot;
+local `progress.json` and `queue_state.json` files show the current running state.
+
+See [the experiment design](docs/REALTIME_OPTIMIZATION.md),
+[GPU throughput measurements](docs/GPU_THROUGHPUT.md), and
+[the frozen protocol](results/realtime_stage1/protocol.json).
 <!-- realtime-stage1:end -->
 
 Implementation details for the extension modules are documented in

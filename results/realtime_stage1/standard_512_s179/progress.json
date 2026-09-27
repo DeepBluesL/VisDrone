@@ -1,0 +1,32 @@
+{
+  "arm_id": "standard_512_s179",
+  "architecture": "standard",
+  "seed": 179,
+  "imgsz": 512,
+  "epochs": 100,
+  "experiment_identity": {
+    "protocol_sha256": "fba07a7c94f372c775b3dfdae20aa6c77a5ede47ff12a014c3ebe096660f0523",
+    "arm": {
+      "id": "standard_512_s179",
+      "architecture": "standard",
+      "imgsz": 512,
+      "seed": 179,
+      "batch": 64
+    }
+  },
+  "resume_count": 0,
+  "status": "running",
+  "epoch": 4,
+  "elapsed_seconds": 90.7,
+  "metrics": {
+    "metrics/precision(B)": 0.24613,
+    "metrics/recall(B)": 0.16327,
+    "metrics/mAP50(B)": 0.1382,
+    "metrics/mAP50-95(B)": 0.06679,
+    "val/box_loss": 1.84358,
+    "val/cls_loss": 1.44873,
+    "val/dfl_loss": 0.99712
+  },
+  "selected_epoch": 4,
+  "peak_cuda_reserved_gb": 6.620708864
+}

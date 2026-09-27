@@ -1,5 +1,5 @@
 id,architecture,imgsz,seed,status,epoch,expected_epochs,precision,recall,map50,map50_95,parameters,gflops_at_imgsz,inference_ms,latency_p50_ms,latency_p95_ms,latency_fps,batch,effective_batch,selected_epoch,issues
-standard_512_s179,standard,512,179,pending,0,100,,,,,,,,,,,,,,
+standard_512_s179,standard,512,179,running,4,100,0.24613,0.16327,0.1382,0.06679,,,,,,,,,,
 standard_768_s179,standard,768,179,pending,0,100,,,,,,,,,,,,,,
 standard_1024_s179,standard,1024,179,pending,0,100,,,,,,,,,,,,,,
 p2_768_s179,p2,768,179,pending,0,100,,,,,,,,,,,,,,

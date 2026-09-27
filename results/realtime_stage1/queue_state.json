@@ -1,0 +1,16 @@
+{
+  "pid": 37340,
+  "suite": "realtime_stage1",
+  "status": "running",
+  "started": 1790499348.3872478,
+  "arm": "standard_512_s179",
+  "updated": 1790499455.2090628,
+  "child_pid": 37584,
+  "gpu_latest": [
+    "55",
+    "22",
+    "8723",
+    "240.09",
+    "52"
+  ]
+}
