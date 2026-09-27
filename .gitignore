@@ -9,6 +9,10 @@ __pycache__/
 *.part
 *.log
 .env
+pretrained/*.pt
+/results/realtime_smoke*/
+/assets/realtime_smoke*/
+/checkpoints/realtime_smoke*/
 results/.staging/
 results/smoke/
 checkpoints/smoke/

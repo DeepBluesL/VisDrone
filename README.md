@@ -7,13 +7,27 @@ and distribution-focal-loss machinery. The MNIST comparison head, global pooling
 left/right label swapping, and feature-norm ranking loss were intentionally left
 behind because they do not define a corresponding object-detection intervention.
 
-The repository contains two experiment generations:
+The repository contains three experiment generations:
 
 - The completed 13-arm `pilot` migration study evaluates the modules that were
   active in the original course model, plus ablations and a matched random-filter
   control.
 - The six-arm `module_extension` study compares five additional efficient-module interventions with
   a freshly trained baseline across three model seeds. All 18 runs are complete.
+- The `realtime_stage1` study uses the complete training set, COCO initialization,
+  longer training, and resolution/P2 comparisons. Its current status is recorded below.
+
+<!-- realtime-stage1:start -->
+## Full-data real-time optimization: preparation
+
+The next screening study trains standard YOLOv8n at 512, 768, and 1024 pixels,
+and YOLOv8n-P2 at 768 and 1024 pixels, for 100 epochs each (seed 179).
+It uses all 6,471 training and 548 validation images and an official COCO checkpoint.
+Training throughput is being profiled on the RTX 5090 D before freezing batch and worker settings.
+No completed full-budget accuracy result is claimed at this preparation stage.
+
+See [the experiment design and execution notes](docs/REALTIME_OPTIMIZATION.md).
+<!-- realtime-stage1:end -->
 
 Implementation details for the extension modules are documented in
 [NEW_MODULES.md](docs/NEW_MODULES.md). Source attribution and licenses are recorded

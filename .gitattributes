@@ -12,3 +12,5 @@
 results/** -text
 assets/** -text
 checkpoints/** -text
+# Preserve raw console evidence, including aligned trailing spaces and ANSI bytes.
+results/**/performance/*_log.txt binary

@@ -1,0 +1,57 @@
+{
+  "purpose": "Throughput tuning only, not accuracy results",
+  "effective_batch_for_formal_runs": 64,
+  "workers": 8,
+  "selected": [
+    {
+      "architecture": "standard",
+      "imgsz": 512,
+      "batch": 64,
+      "images_per_second": 492.6961974717891,
+      "gpu_util_mean": 60.0,
+      "gpu_util_p95": 67.0,
+      "peak_reserved_gb": 6.576668672,
+      "host_wait_mean_ms": 0.23171124999999998
+    },
+    {
+      "architecture": "standard",
+      "imgsz": 768,
+      "batch": 64,
+      "images_per_second": 268.8301924533295,
+      "gpu_util_mean": 73.39784946236558,
+      "gpu_util_p95": 86.39999999999999,
+      "peak_reserved_gb": 12.805210112,
+      "host_wait_mean_ms": 0.2368875
+    },
+    {
+      "architecture": "standard",
+      "imgsz": 1024,
+      "batch": 64,
+      "images_per_second": 183.89468454856666,
+      "gpu_util_mean": 80.98529411764706,
+      "gpu_util_p95": 99.0,
+      "peak_reserved_gb": 22.535995392,
+      "host_wait_mean_ms": 0.23300124999999997
+    },
+    {
+      "architecture": "p2",
+      "imgsz": 768,
+      "batch": 64,
+      "images_per_second": 148.78386336712876,
+      "gpu_util_mean": 75.30952380952381,
+      "gpu_util_p95": 98.0,
+      "peak_reserved_gb": 20.818427904,
+      "host_wait_mean_ms": 0.23220625
+    },
+    {
+      "architecture": "p2",
+      "imgsz": 1024,
+      "batch": 32,
+      "images_per_second": 90.24254180572466,
+      "gpu_util_mean": 74.79768786127168,
+      "gpu_util_p95": 90.40000000000003,
+      "peak_reserved_gb": 20.31091712,
+      "host_wait_mean_ms": 0.216995
+    }
+  ]
+}

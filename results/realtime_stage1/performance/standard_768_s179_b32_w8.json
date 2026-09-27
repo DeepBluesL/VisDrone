@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "purpose": "throughput profile; not a training result",
+  "protocol_sha256": "d77906c77e8623a3a089706762c588684d42ba56a865cb147f3eb0f3e3b8390b",
+  "arm": {
+    "id": "standard_768_s179",
+    "architecture": "standard",
+    "imgsz": 768,
+    "seed": 179
+  },
+  "batch": 32,
+  "training_code_sha256": {
+    "scripts/train_realtime.py": "ddd21759c9043c0b23f4d2b4953ecf310339f5e5ab15f4b5b6a0a540e63bf250",
+    "visdrone_migration/realtime_models.py": "eb3174c6097a8b02172700541442e97fb5bc800a38159b88fd6bee166b6c85e1",
+    "visdrone_migration/realtime_trainer.py": "c7c1c9b6a6872b4afecd7260963dfdbc2fd8f8e329c6920c779f3a2dcc64d432",
+    "visdrone_migration/realtime_performance.py": "a657f2499cf6f03a9add60d011c3478322d066e7cdfcee2b031dcf8541161b74",
+    "visdrone_migration/realtime_protocol.py": "f154517556e47f75b782ef7065872cb1d0ecdbb9227d8e0fb461c12768f68b26",
+    "visdrone_migration/evidence.py": "35a5edacde57f4217bc593a50b21e392feba68bdcab2f19f3c0dd3e78a77a0db",
+    "visdrone_migration/profiling.py": "9954e91bfad7fb63f756641c25c72df11ce19247d889a00e304ae1ac60def809"
+  },
+  "profile_script_sha256": "0da6ad551c30cd81e95ea50dd32bc17f298a0caffda932e8dae1ce83a08fec4d",
+  "workers": 8,
+  "effective_batch": 32,
+  "accumulate": 1,
+  "amp": true,
+  "warmup_steps": 20,
+  "measured_steps": 100,
+  "amp_check": "bypassed profiler-only YOLO11n comparison/download; FP16 path exercised directly",
+  "images_seen": 3200,
+  "total_wall_seconds": 12.8596877,
+  "throughput_images_per_second": 248.83963550685604,
+  "gpu_step_ms": {
+    "samples": 100,
+    "mean": 128.3504517364502,
+    "p50": 128.0845947265625,
+    "p95": 141.01072540283204,
+    "max": 151.9892120361328
+  },
+  "host_next_batch_ms": {
+    "samples": 100,
+    "mean": 0.197034,
+    "p50": 0.19105,
+    "p95": 0.30064,
+    "max": 0.4459
+  },
+  "host_dispatch_ms": {
+    "samples": 100,
+    "mean": 128.395144,
+    "p50": 128.13004999999998,
+    "p95": 141.1445,
+    "max": 152.0392
+  },
+  "peak_cuda_allocated_gb": 5.97409536,
+  "peak_cuda_reserved_gb": 7.113539584,
+  "telemetry": {
+    "gpu_util_percent": {
+      "samples": 62,
+      "mean": 67.2258064516129,
+      "p50": 68.0,
+      "p95": 74.0,
+      "max": 75.0
+    },
+    "memory_used_mib": {
+      "samples": 62,
+      "mean": 8985.129032258064,
+      "p50": 8936.0,
+      "p95": 9102.65,
+      "max": 9177.0
+    },
+    "power_w": {
+      "samples": 62,
+      "mean": 253.13,
+      "p50": 253.55,
+      "p95": 257.71,
+      "max": 258.31
+    },
+    "sm_clock_mhz": {
+      "samples": 62,
+      "mean": 2850.0,
+      "p50": 2850.0,
+      "p95": 2850.0,
+      "max": 2850.0
+    }
+  },
+  "timing_note": "CUDA events cover H2D preprocessing, forward/loss, backward, and optimizer/EMA on accumulation boundaries. Total wall preserves asynchronous overlap and synchronizes only at measurement boundaries. host_next_batch_ms is host blocking time and may overlap outstanding GPU work.",
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 5090 D",
+    "torch": "2.9.0.dev20250907+cu128",
+    "cuda": "12.8",
+    "python": "3.10.13",
+    "platform": "Windows-10-10.0.26200-SP0"
+  }
+}

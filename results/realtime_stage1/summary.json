@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "suite": "realtime_stage1",
+  "protocol_sha256": "7a2c4d73d510652179f9b48f89bec4410dd37fa511aaa7d651a9d949b9013ad9",
+  "expected_arms": 5,
+  "completed_arms": 0,
+  "status_counts": {
+    "completed": 0,
+    "running": 0,
+    "pending": 5,
+    "failed": 0,
+    "invalid": 0
+  },
+  "arms": [
+    {
+      "id": "standard_512_s179",
+      "architecture": "standard",
+      "imgsz": 512,
+      "seed": 179,
+      "expected_epochs": 100,
+      "status": "pending",
+      "epoch": 0,
+      "issues": []
+    },
+    {
+      "id": "standard_768_s179",
+      "architecture": "standard",
+      "imgsz": 768,
+      "seed": 179,
+      "expected_epochs": 100,
+      "status": "pending",
+      "epoch": 0,
+      "issues": []
+    },
+    {
+      "id": "standard_1024_s179",
+      "architecture": "standard",
+      "imgsz": 1024,
+      "seed": 179,
+      "expected_epochs": 100,
+      "status": "pending",
+      "epoch": 0,
+      "issues": []
+    },
+    {
+      "id": "p2_768_s179",
+      "architecture": "p2",
+      "imgsz": 768,
+      "seed": 179,
+      "expected_epochs": 100,
+      "status": "pending",
+      "epoch": 0,
+      "issues": []
+    },
+    {
+      "id": "p2_1024_s179",
+      "architecture": "p2",
+      "imgsz": 1024,
+      "seed": 179,
+      "expected_epochs": 100,
+      "status": "pending",
+      "epoch": 0,
+      "issues": []
+    }
+  ],
+  "generated_plots": []
+}

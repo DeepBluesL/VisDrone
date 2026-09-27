@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "suite": "realtime_stage1",
+  "title": "Full-data COCO-pretrained VisDrone: resolution and P2 screening",
+  "purpose": "Optimization steps 1 and 2; single-seed screening before repeated finalist runs",
+  "data": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\full\\dataset.yaml",
+  "pretrained": "E:\\DeepLearning\\ML_mid\\VisDrone\\pretrained\\yolov8n.pt",
+  "training": {
+    "epochs": 100,
+    "batch": 64,
+    "workers": 8,
+    "device": "0",
+    "optimizer": "AdamW",
+    "lr0": 0.001,
+    "lrf": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "nbs": 64,
+    "warmup_epochs": 3.0,
+    "warmup_bias_lr": 0.0,
+    "cos_lr": true,
+    "patience": 0,
+    "deterministic": true,
+    "amp": true,
+    "cache": "disk",
+    "plots": true,
+    "save": true,
+    "val": true,
+    "close_mosaic": 10,
+    "mosaic": 0.3,
+    "mixup": 0.0,
+    "copy_paste": 0.0,
+    "degrees": 0.0,
+    "translate": 0.1,
+    "scale": 0.3,
+    "shear": 0.0,
+    "perspective": 0.0,
+    "flipud": 0.0,
+    "fliplr": 0.5,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "max_det": 500,
+    "verbose": false
+  },
+  "arms": [
+    {
+      "id": "standard_512_s179",
+      "architecture": "standard",
+      "imgsz": 512,
+      "seed": 179,
+      "batch": 64
+    },
+    {
+      "id": "standard_768_s179",
+      "architecture": "standard",
+      "imgsz": 768,
+      "seed": 179,
+      "batch": 64
+    },
+    {
+      "id": "standard_1024_s179",
+      "architecture": "standard",
+      "imgsz": 1024,
+      "seed": 179,
+      "batch": 64
+    },
+    {
+      "id": "p2_768_s179",
+      "architecture": "p2",
+      "imgsz": 768,
+      "seed": 179,
+      "batch": 64
+    },
+    {
+      "id": "p2_1024_s179",
+      "architecture": "p2",
+      "imgsz": 1024,
+      "seed": 179,
+      "batch": 32
+    }
+  ],
+  "initialization": "Semantic COCO transfer with seeded new/classification layers; per-tensor audit retained",
+  "selection": "Best validation AP50-95 over the full fixed budget; no early stopping",
+  "evaluation": "Converted ten-class validation AP, not official ignore-region matching",
+  "validation_batch": 32,
+  "precision_speed_goal": "RTX 5090 D batch-1 FP16 latency after each completed run; no deployment FPS target assumed",
+  "sampling": "All training images once per epoch, ordinary shuffled loader; no class resampling",
+  "effective_batch_note": "nbs=64 after warmup; native warmup interpolates accumulation from 1",
+  "physical_batch_note": "Physical batch may differ by arm for GPU utilization. BatchNorm statistics and per-microbatch loss normalization are not identical despite equal effective batch; this is practical configuration screening.",
+  "performance": "Disk-decoded image cache, pinned persistent loader workers and bounded per-image assignment; identical loss/assignment objective",
+  "resume_note": "Atomic FP32 training-state checkpoints; worker prefetch/augmentation state is not bitwise reproducible",
+  "smoke": false,
+  "identity": {
+    "training_code": {
+      "scripts/train_realtime.py": "ae54da6f2647b1177fd4e65dc6448d9e3d9ac3986e64a12c1a15294eb11e51d9",
+      "visdrone_migration/realtime_models.py": "eb3174c6097a8b02172700541442e97fb5bc800a38159b88fd6bee166b6c85e1",
+      "visdrone_migration/realtime_trainer.py": "fbeacd455fb080a299511fd86f03d20f3cf07e615a010f535e30156256748d34",
+      "visdrone_migration/realtime_performance.py": "0b21fe8e5b68cfb0dff33acbbbfe078f377d4bf3f3721a69df9af7787e45ba26",
+      "visdrone_migration/realtime_protocol.py": "7a2a6014f51b012173fede17fc22578fd498dc72157e772fe1be9251b763f130",
+      "visdrone_migration/evidence.py": "35a5edacde57f4217bc593a50b21e392feba68bdcab2f19f3c0dd3e78a77a0db",
+      "visdrone_migration/profiling.py": "9954e91bfad7fb63f756641c25c72df11ce19247d889a00e304ae1ac60def809"
+    },
+    "data": {
+      "train": {
+        "images": 6471,
+        "image_and_label_sha256": "cae940973dba29917c11cd221ae632c5937e288e0d77f7809453916befcfbd23"
+      },
+      "val": {
+        "images": 548,
+        "image_and_label_sha256": "dcfe7073679ec50496683ebdaf9d25a6c69b515fbee4793c9118147d7c4faae7"
+      }
+    },
+    "data_yaml_sha256": "97d0ac60d0471bc2dbc04184b4d6107040a57d3c8c17c69ac5a58627810970d7",
+    "pretrained_sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+    "runtime": {
+      "python": "3.10.13",
+      "packages": {
+        "torch": "2.9.0.dev20250907+cu128",
+        "torchvision": "0.24.0.dev20250907+cu128",
+        "ultralytics": "8.3.195",
+        "numpy": "1.26.4",
+        "Pillow": "11.3.0"
+      },
+      "cuda": "12.8",
+      "gpu": "NVIDIA GeForce RTX 5090 D",
+      "driver": "596.49"
+    }
+  }
+}

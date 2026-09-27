@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "unit_tests": 71,
+  "unit_test_log_sha256": "ccb37a5918c4114e29f5c9143b5d1042768526ece222b56e49a53abc03be5d55",
+  "training_code": {
+    "scripts/train_realtime.py": "ae54da6f2647b1177fd4e65dc6448d9e3d9ac3986e64a12c1a15294eb11e51d9",
+    "visdrone_migration/realtime_models.py": "eb3174c6097a8b02172700541442e97fb5bc800a38159b88fd6bee166b6c85e1",
+    "visdrone_migration/realtime_trainer.py": "fbeacd455fb080a299511fd86f03d20f3cf07e615a010f535e30156256748d34",
+    "visdrone_migration/realtime_performance.py": "0b21fe8e5b68cfb0dff33acbbbfe078f377d4bf3f3721a69df9af7787e45ba26",
+    "visdrone_migration/realtime_protocol.py": "7a2a6014f51b012173fede17fc22578fd498dc72157e772fe1be9251b763f130",
+    "visdrone_migration/evidence.py": "35a5edacde57f4217bc593a50b21e392feba68bdcab2f19f3c0dd3e78a77a0db",
+    "visdrone_migration/profiling.py": "9954e91bfad7fb63f756641c25c72df11ce19247d889a00e304ae1ac60def809"
+  },
+  "smoke": "realtime_smoke_v4",
+  "smoke_completed_arms": 2,
+  "smoke_epoch_budget": 1,
+  "smoke_train_images": 64,
+  "smoke_val_images": 64,
+  "smoke_no_oom_or_cpu_fallback": true,
+  "resume_test": {
+    "suite": "realtime_smoke_v3",
+    "architecture": "p2",
+    "imgsz": 1024,
+    "interrupted_after_epoch": 1,
+    "resumed_to_epoch": 2,
+    "continuous_csv_epochs": [
+      1,
+      2
+    ],
+    "resume_count": 1,
+    "note": "Resume passed; validation fallback found in that test was subsequently fixed and rechecked in v4"
+  },
+  "previous_archived_artifacts_verified_unchanged": 290,
+  "note": "Infrastructure validation only; these are not full-budget accuracy results"
+}
