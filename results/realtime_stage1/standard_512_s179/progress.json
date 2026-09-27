@@ -15,18 +15,19 @@
     }
   },
   "resume_count": 0,
-  "status": "running",
-  "epoch": 4,
-  "elapsed_seconds": 90.7,
+  "status": "paused",
+  "epoch": 31,
+  "elapsed_seconds": 509.2,
   "metrics": {
-    "metrics/precision(B)": 0.24613,
-    "metrics/recall(B)": 0.16327,
-    "metrics/mAP50(B)": 0.1382,
-    "metrics/mAP50-95(B)": 0.06679,
-    "val/box_loss": 1.84358,
-    "val/cls_loss": 1.44873,
-    "val/dfl_loss": 0.99712
+    "metrics/precision(B)": 0.35948,
+    "metrics/recall(B)": 0.24945,
+    "metrics/mAP50(B)": 0.23195,
+    "metrics/mAP50-95(B)": 0.12591,
+    "val/box_loss": 1.50205,
+    "val/cls_loss": 1.10607,
+    "val/dfl_loss": 0.92022
   },
-  "selected_epoch": 4,
-  "peak_cuda_reserved_gb": 6.620708864
+  "selected_epoch": 30,
+  "peak_cuda_reserved_gb": 6.622806016,
+  "pause_reason": "User expected GPU to be idle; background training stopped with last complete checkpoint retained."
 }

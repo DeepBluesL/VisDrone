@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "suite": "realtime_stage1",
+  "status": "paused",
+  "arm_id": "standard_512_s179",
+  "epoch": 31,
+  "expected_epochs": 100,
+  "completed_arms": 0,
+  "expected_arms": 5,
+  "checkpoint": {
+    "path": "runs/realtime_stage1/standard_512_s179/weights/last.pt",
+    "bytes": 48856350,
+    "sha256": "d9596f80c0c4e67cabb651031054de7e558e1388c44526a0766326763c20a201",
+    "optimizer_state_preserved": true,
+    "location": "local run state only",
+    "published_as_completed_result": false
+  },
+  "note": "The epoch-boundary checkpoint remains in the local runs directory for a possible explicit resume. It is not a completed experiment result and was not exported or published as one."
+}

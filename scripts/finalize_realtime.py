@@ -249,7 +249,8 @@ def verify_report(root: Path, verified: list[dict[str, Any]]) -> None:
     counts = summary.get("status_counts")
     if (summary.get("suite") != SUITE or summary.get("expected_arms") != EXPECTED_ARMS
             or summary.get("completed_arms") != EXPECTED_ARMS
-            or counts != {"completed": EXPECTED_ARMS, "running": 0, "pending": 0, "failed": 0, "invalid": 0}):
+            or counts != {"completed": EXPECTED_ARMS, "running": 0, "paused": 0,
+                          "pending": 0, "failed": 0, "invalid": 0}):
         raise ValueError("summary.json does not describe a complete valid five-arm suite")
     states = summary.get("arms")
     if not isinstance(states, list) or {state.get("id") for state in states} != {row["id"] for row in verified}:

@@ -1,16 +1,18 @@
 {
   "pid": 37340,
   "suite": "realtime_stage1",
-  "status": "running",
+  "status": "paused",
   "started": 1790499348.3872478,
   "arm": "standard_512_s179",
-  "updated": 1790499455.2090628,
+  "updated": 1790499864.973637,
   "child_pid": 37584,
   "gpu_latest": [
-    "55",
-    "22",
-    "8723",
-    "240.09",
-    "52"
-  ]
+    "4",
+    "1",
+    "8848",
+    "116.71",
+    "53"
+  ],
+  "reason": "User expected GPU to be idle; background training stopped with last complete checkpoint retained.",
+  "paused_epoch": 31
 }

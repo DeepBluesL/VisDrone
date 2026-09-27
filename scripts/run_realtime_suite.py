@@ -110,6 +110,8 @@ def main():
     parser.add_argument("--profiled-batches", action="store_true")
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--skip-benchmark", action="store_true")
+    parser.add_argument("--resume-paused", action="store_true",
+                        help="bypass a user pause marker only after the user explicitly requests resume")
     parser.add_argument("--finalize", action="store_true", help="verify/archive/commit after all five arms complete")
     parser.add_argument("--push", action="store_true", help="push verified final results to the existing authorized repository")
     args = parser.parse_args()
@@ -121,6 +123,14 @@ def main():
         raise SystemExit("--push requires --finalize")
     if args.finalize and (args.suite != "realtime_stage1" or args.skip_benchmark):
         raise SystemExit("Finalization requires realtime_stage1 and completed speed benchmarks")
+    pause_marker = ROOT / ".runtime" / "training_paused_by_user.json"
+    if not args.prepare_only and not args.resume_paused and pause_marker.exists():
+        pause = json.loads(pause_marker.read_text(encoding="utf-8"))
+        if pause.get("automatic_restart_allowed") is False:
+            raise SystemExit(
+                "Training is paused by user request; automatic restart is forbidden. "
+                "Use --resume-paused only after the user explicitly requests resume."
+            )
     suite_dir = ROOT / "results" / args.suite
     suite_dir.mkdir(parents=True, exist_ok=True)
     protocol_path = suite_dir / "protocol.json"

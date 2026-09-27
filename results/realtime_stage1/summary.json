@@ -6,7 +6,8 @@
   "completed_arms": 0,
   "status_counts": {
     "completed": 0,
-    "running": 1,
+    "running": 0,
+    "paused": 1,
     "pending": 4,
     "failed": 0,
     "invalid": 0
@@ -18,13 +19,14 @@
       "imgsz": 512,
       "seed": 179,
       "expected_epochs": 100,
-      "status": "running",
-      "epoch": 4,
+      "status": "paused",
+      "epoch": 31,
       "issues": [],
-      "precision": 0.24613,
-      "recall": 0.16327,
-      "map50": 0.1382,
-      "map50_95": 0.06679
+      "precision": 0.35948,
+      "recall": 0.24945,
+      "map50": 0.23195,
+      "map50_95": 0.12591,
+      "pause_reason": "User expected GPU to be idle; background training stopped with last complete checkpoint retained."
     },
     {
       "id": "standard_768_s179",

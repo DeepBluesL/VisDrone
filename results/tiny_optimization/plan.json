@@ -1,0 +1,25 @@
+{
+  "action": "plan-only",
+  "suite": "tiny_optimization",
+  "selected_arm": null,
+  "arms": [
+    "baseline",
+    "aux_control",
+    "hbs",
+    "api",
+    "set",
+    "simd",
+    "set_simd"
+  ],
+  "architecture": "standard",
+  "imgsz": 768,
+  "epochs": 100,
+  "batch": 32,
+  "workers": 8,
+  "seed": 179,
+  "data": "E:\\DeepLearning\\ML_mid\\VisDrone\\data\\full\\dataset.yaml",
+  "pretrained": "E:\\DeepLearning\\ML_mid\\VisDrone\\pretrained\\yolov8n.pt",
+  "calibration": "E:\\DeepLearning\\ML_mid\\VisDrone\\.runtime\\simd_normalizers.json",
+  "calibration_required_for_protocol_freeze": true,
+  "cuda_initialized": false
+}

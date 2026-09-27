@@ -107,6 +107,15 @@ def _metric_values(record: dict[str, Any]) -> dict[str, float | None]:
     return {name: _number(raw.get(key)) for name, key in METRICS.items()}
 
 
+def _display_label(state: dict[str, Any], *, multiline: bool = False) -> str:
+    """Keep homogeneous tiny-optimization arms distinguishable in standalone figures."""
+    if "optimization" in state:
+        return state["id"]
+    separator = "\n" if multiline else " "
+    return f"{state['architecture']}{separator}{state['imgsz']}" + (
+        "" if multiline else f" (s{state['seed']})")
+
+
 def _check_identity(arm: dict[str, Any], record: dict[str, Any], *, allow_missing: bool = False) -> list[str]:
     errors: list[str] = []
     required = (("seed", arm["seed"]), ("imgsz", arm["imgsz"]))
@@ -149,6 +158,20 @@ def _history(path: Path) -> list[dict[str, float]]:
     return rows
 
 
+def _pause_evidence(suite_dir: Path, run_dir: Path, arm: dict[str, Any]) -> dict[str, Any] | None:
+    progress_path = run_dir / "progress.json"
+    progress = _read_json(progress_path) if progress_path.exists() else {}
+    if progress.get("status") == "paused":
+        return progress
+    queue_path = suite_dir / "queue_state.json"
+    if queue_path.exists():
+        queue = _read_json(queue_path)
+        if queue.get("status") == "paused" and queue.get("arm") == arm["id"]:
+            return {**progress, "status": "paused", "epoch": queue.get("paused_epoch", progress.get("epoch", 0)),
+                    "pause_reason": queue.get("reason", progress.get("pause_reason"))}
+    return None
+
+
 def _run_state(suite_dir: Path, arm: dict[str, Any]) -> dict[str, Any]:
     run_dir = suite_dir / arm["id"]
     metrics_path, progress_path = run_dir / "metrics.json", run_dir / "progress.json"
@@ -157,6 +180,8 @@ def _run_state(suite_dir: Path, arm: dict[str, Any]) -> dict[str, Any]:
                              "expected_epochs": arm.get("epochs"), "status": "pending",
                              "epoch": 0, "history": _history(run_dir / "epochs.csv"),
                              "issues": []}
+    if "optimization" in arm:
+        state["optimization"] = arm["optimization"]
     record: dict[str, Any] | None = None
     if metrics_path.exists():
         try:
@@ -189,7 +214,20 @@ def _run_state(suite_dir: Path, arm: dict[str, Any]) -> dict[str, Any]:
                          metrics_sha256=_sha256(metrics_path))
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             state.update(status="invalid", issues=[f"cannot read metrics.json: {exc}"])
-    elif (run_dir / "failure.json").exists():
+    else:
+        try:
+            paused = _pause_evidence(suite_dir, run_dir, arm)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            paused = None
+            state.update(status="invalid", issues=[f"cannot read pause state: {exc}"])
+    if record is None and state["status"] != "invalid" and paused is not None:
+        state["issues"] = _check_identity(arm, paused, allow_missing=True)
+        state["status"] = "invalid" if state["issues"] else "paused"
+        state["epoch"] = paused.get("epoch", 0)
+        state.update(_metric_values(paused))
+        if paused.get("pause_reason"):
+            state["pause_reason"] = str(paused["pause_reason"])
+    elif record is None and state["status"] != "invalid" and (run_dir / "failure.json").exists():
         try:
             failure = _read_json(run_dir / "failure.json")
             state["issues"] = _check_identity(arm, failure, allow_missing=True)
@@ -199,7 +237,7 @@ def _run_state(suite_dir: Path, arm: dict[str, Any]) -> dict[str, Any]:
                 state["issues"].append(str(failure["error"]))
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             state.update(status="invalid", issues=[f"cannot read failure.json: {exc}"])
-    elif progress_path.exists():
+    elif record is None and state["status"] != "invalid" and progress_path.exists():
         try:
             progress = _read_json(progress_path)
             state["issues"] = _check_identity(arm, progress, allow_missing=True)
@@ -268,7 +306,7 @@ def _plot_learning(states: list[dict[str, Any]], path: Path) -> bool:
         epochs = [row["epoch"] for row in state["history"]]
         style = "-" if state["status"] == "completed" else "--"
         suffix = "" if state["status"] == "completed" else f" [{state['status']}]"
-        label = f"{state['architecture']} {state['imgsz']} (s{state['seed']}){suffix}"
+        label = _display_label(state) + suffix
         for axis, key, title in zip(axes, ("map50_95", "map50"), ("AP50–95", "AP50")):
             points = [(x, row[key]) for x, row in zip(epochs, state["history"]) if row[key] is not None]
             if points:
@@ -291,7 +329,7 @@ def _plot_comparison(completed: list[dict[str, Any]], path: Path) -> bool:
     if not completed:
         path.unlink(missing_ok=True)
         return False
-    labels = [f"{s['architecture']}\n{s['imgsz']}" for s in completed]
+    labels = [_display_label(s, multiline=True) for s in completed]
     x = np.arange(len(completed))
     width = .36
     fig, axis = plt.subplots(figsize=(max(8, len(completed) * 1.6), 5.2))
@@ -316,7 +354,7 @@ def _plot_efficiency(completed: list[dict[str, Any]], path: Path) -> bool:
     panels = 3 if latency else 2
     fig, axes = plt.subplots(1, panels, figsize=(6 * panels, 5))
     for state in usable:
-        label = f"{state['architecture']} {state['imgsz']}"
+        label = _display_label(state)
         axes[0].scatter(float(state["parameters"]) / 1e6, state["map50_95"], s=60)
         axes[0].annotate(label, (float(state["parameters"]) / 1e6, state["map50_95"]),
                          xytext=(4, 4), textcoords="offset points", fontsize=8)
@@ -329,7 +367,7 @@ def _plot_efficiency(completed: list[dict[str, Any]], path: Path) -> bool:
         axis.grid(alpha=.25)
     if latency:
         for state in latency:
-            label = f"{state['architecture']} {state['imgsz']}\n{state['latency_fps']:.1f} FPS"
+            label = f"{_display_label(state)}\n{state['latency_fps']:.1f} FPS"
             delta = max(0.0, state["latency_p95_ms"] - state["latency_p50_ms"])
             axes[2].errorbar(state["latency_p50_ms"], state["map50_95"], xerr=[[0.0], [delta]],
                              fmt="o", capsize=4)
@@ -349,7 +387,7 @@ def _fmt(value: Any, digits: int = 4) -> str:
 
 
 def _write_csv(states: list[dict[str, Any]], path: Path) -> None:
-    fields = ["id", "architecture", "imgsz", "seed", "status", "epoch", "expected_epochs",
+    fields = ["id", "architecture", "optimization", "imgsz", "seed", "status", "epoch", "expected_epochs",
               "precision", "recall", "map50", "map50_95", "parameters", "gflops_at_imgsz",
               "inference_ms", "latency_p50_ms", "latency_p95_ms", "latency_fps",
               "batch", "effective_batch", "selected_epoch", "issues"]
@@ -358,26 +396,37 @@ def _write_csv(states: list[dict[str, Any]], path: Path) -> None:
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
         for state in states:
-            writer.writerow({key: "; ".join(state.get(key, [])) if key == "issues" else state.get(key)
-                             for key in fields})
+            writer.writerow({key: ("; ".join(state.get(key, [])) if key == "issues"
+                                   else json.dumps(state.get(key), sort_keys=True) if key == "optimization" and key in state
+                                   else state.get(key)) for key in fields})
         temporary = Path(stream.name)
     temporary.replace(path)
 
 
 def _report(suite: str, protocol: dict[str, Any], states: list[dict[str, Any]], plots: list[str]) -> str:
     counts = {name: sum(s["status"] == name for s in states)
-              for name in ("completed", "running", "pending", "failed", "invalid")}
+              for name in ("completed", "running", "paused", "pending", "failed", "invalid")}
+    has_optimization = any("optimization" in state for state in states)
     lines = [f"# {protocol.get('title', suite)}", "",
              f"Status: **{counts['completed']}/{len(states)} completed**, {counts['running']} running, "
-             f"{counts['pending']} pending, {counts['failed']} failed, {counts['invalid']} invalid.", "",
+             f"{counts['paused']} paused, {counts['pending']} pending, {counts['failed']} failed, {counts['invalid']} invalid.", "",
+             "A paused arm is incomplete and is not counted as a completed result. It remains excluded from final accuracy and efficiency comparisons.", "",
              "Each row is one protocol arm and one seed. Incomplete arms are excluded from final "
              "accuracy and efficiency comparisons. No across-arm mean, standard deviation, confidence "
-             "interval, or significance claim is reported.", "",
-             "| Arm | Architecture | Image size | Seed | Status | Epoch | Precision | Recall | AP50 | AP50–95 | Params | GFLOPs¹ | Validator ms² | E2E p50/p95 ms³ | FPS³ |",
-             "|---|---|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+             "interval, or significance claim is reported.", ""]
+    if has_optimization:
+        lines += ["| Arm | Architecture | Optimization | Image size | Seed | Status | Epoch | Precision | Recall | AP50 | AP50–95 | Params | GFLOPs¹ | Validator ms² | E2E p50/p95 ms³ | FPS³ |",
+                  "|---|---|---|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    else:
+        lines += ["| Arm | Architecture | Image size | Seed | Status | Epoch | Precision | Recall | AP50 | AP50–95 | Params | GFLOPs¹ | Validator ms² | E2E p50/p95 ms³ | FPS³ |",
+                  "|---|---|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for s in states:
         epoch = f"{s.get('epoch', 0)}/{s.get('expected_epochs') or '?'}"
-        lines.append(f"| {s['id']} | {s['architecture']} | {s['imgsz']} | {s['seed']} | {s['status']} | {epoch} | "
+        optimization = (json.dumps(s.get("optimization"), sort_keys=True, separators=(",", ":"))
+                        if "optimization" in s else None)
+        prefix = (f"| {s['id']} | {s['architecture']} | `{optimization}` | {s['imgsz']} | "
+                  if has_optimization else f"| {s['id']} | {s['architecture']} | {s['imgsz']} | ")
+        lines.append(prefix + f"{s['seed']} | {s['status']} | {epoch} | "
                      f"{_fmt(s.get('precision'))} | {_fmt(s.get('recall'))} | {_fmt(s.get('map50'))} | "
                      f"{_fmt(s.get('map50_95'))} | {_fmt(s.get('parameters'), 0)} | "
                      f"{_fmt(s.get('gflops_at_imgsz'), 3)} | {_fmt(s.get('inference_ms'), 3)} | "
@@ -421,7 +470,7 @@ def generate(suite_dir: Path, assets_dir: Path) -> dict[str, Any]:
                "protocol_sha256": _sha256(protocol_path), "expected_arms": len(states),
                "completed_arms": len(completed),
                "status_counts": {name: sum(s["status"] == name for s in states)
-                                 for name in ("completed", "running", "pending", "failed", "invalid")},
+                                 for name in ("completed", "running", "paused", "pending", "failed", "invalid")},
                "arms": serializable, "generated_plots": plots}
     _write_csv(serializable, suite_dir / "summary.csv")
     _atomic_json(suite_dir / "summary.json", summary)

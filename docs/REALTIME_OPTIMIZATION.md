@@ -1,5 +1,11 @@
 # Full-data pretrained resolution and P2 study
 
+Current status: **paused**, with 0/5 arms completed and the first arm at epoch
+31/100. The resumable checkpoint is recorded in
+[pause_snapshot.json](../results/realtime_stage1/pause_snapshot.json).
+The queue refuses ordinary execution while the user pause marker is present;
+`--resume-paused` is reserved for an explicit user request to resume.
+
 This study implements optimization steps 1 and 2 after the short module experiments.
 The goal is to find a useful accuracy/latency tradeoff on the current RTX 5090 D.
 The final deployment device and FPS requirement have not been fixed.

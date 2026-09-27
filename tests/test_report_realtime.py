@@ -58,6 +58,37 @@ class RealtimeReportIdentityTests(unittest.TestCase):
         self.assertEqual(state["status"], "failed")
         self.assertTrue(any("child exited 1" in issue for issue in state["issues"]))
 
+    def test_paused_queue_overrides_stale_failure_without_becoming_completed(self):
+        run = self.suite / self.arm["id"]
+        run.mkdir()
+        progress = {"status": "paused", "arm_id": self.arm["id"], "architecture": "standard",
+                    "imgsz": 512, "seed": 179, "epochs": 100, "epoch": 31}
+        (run / "progress.json").write_text(json.dumps(progress), encoding="utf-8")
+        (run / "failure.json").write_text(json.dumps({**progress, "status": "failed", "error": "old"}),
+                                           encoding="utf-8")
+        (self.suite / "queue_state.json").write_text(json.dumps({"status": "paused",
+            "arm": self.arm["id"], "paused_epoch": 31, "reason": "user requested stop"}), encoding="utf-8")
+        state = report_realtime._run_state(self.suite, report_realtime._protocol_arms(self.protocol)[0])
+        self.assertEqual(state["status"], "paused")
+        self.assertEqual(state["epoch"], 31)
+        self.assertNotEqual(state["status"], "completed")
+
+    def test_tiny_optimization_pending_arms_keep_distinct_labels(self):
+        names = ("baseline", "aux_control", "hbs", "api", "set", "simd", "set_simd")
+        protocol = {"title": "Tiny optimization plan", "training": {"epochs": 100},
+                    "arms": [{"id": name, "architecture": "standard", "imgsz": 768,
+                              "seed": 179, "optimization": {} if name == "baseline" else {name: True}}
+                             for name in names]}
+        (self.suite / "protocol.json").write_text(json.dumps(protocol), encoding="utf-8")
+        summary = report_realtime.generate(self.suite, self.root / "assets")
+        self.assertEqual(summary["status_counts"]["pending"], 7)
+        self.assertEqual([arm["id"] for arm in summary["arms"]], list(names))
+        report = (self.suite / "REPORT.md").read_text(encoding="utf-8")
+        self.assertIn("| Arm | Architecture | Optimization |", report)
+        for name in names:
+            self.assertIn(f"| {name} | standard |", report)
+        self.assertEqual(report_realtime._display_label(summary["arms"][-1]), "set_simd")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -18,9 +18,14 @@ The repository contains three experiment generations:
   longer training, and resolution/P2 comparisons. Its current status is recorded below.
 
 <!-- realtime-stage1:start -->
-## Full-data real-time optimization: training in progress
+## Full-data real-time optimization: paused
 
-The running screening study trains standard YOLOv8n at 512, 768, and 1024 pixels,
+The screening study is currently paused at epoch 31/100 of its first arm,
+`standard_512_s179`. No arm has completed, so there are no full-budget accuracy
+or latency results. Training will remain stopped unless the user explicitly asks
+to resume it.
+
+The planned study trains standard YOLOv8n at 512, 768, and 1024 pixels,
 and YOLOv8n-P2 at 768 and 1024 pixels, for 100 epochs each (seed 179).
 It uses all 6,471 training and 548 validation images and an official COCO checkpoint.
 The frozen RTX 5090 D recipe uses eight data workers, decoded disk caching, AMP,
@@ -28,19 +33,29 @@ physical batch 64 (32 for P2/1024), and effective batch 64 via accumulation.
 Validation batch is 32 for every arm. Measured standard/512 training throughput rose
 from approximately 236 images/s at batch 16 to 493 images/s at batch 64.
 The heavier selected configurations averaged approximately 73–81% GPU utilization.
-These are throughput profiles; full-budget accuracy results are still pending.
+These are throughput profiles; full-budget accuracy results remain pending.
 
-The queue was launched on September 27, 2026. It runs the five arms sequentially,
-records each epoch, refreshes the report every ten epochs, and benchmarks each completed
-checkpoint. After all runs pass verification, it updates the English report and README,
-archives the results, and pushes them to this repository. A failed run stops publication.
+The queue was launched and then stopped at the user's request on September 27, 2026.
+Its last complete epoch checkpoint was retained for a possible explicit resume.
 The [report](results/realtime_stage1/REPORT.md) is a repository snapshot;
-local `progress.json` and `queue_state.json` files show the current running state.
+local `progress.json` and `queue_state.json` files show the current execution state.
 
 See [the experiment design](docs/REALTIME_OPTIMIZATION.md),
 [GPU throughput measurements](docs/GPU_THROUGHPUT.md), and
 [the frozen protocol](results/realtime_stage1/protocol.json).
 <!-- realtime-stage1:end -->
+
+## Planned training-only tiny-object study
+
+A separate seven-arm study specifies `baseline`, `aux_control`, HBS, API, SET,
+SimD-TAL, and SET+SimD at standard 768 resolution. It prioritizes training-only
+changes because the completed studies show that smaller or cheaper feature
+modules do not guarantee better AP or runtime, but this design likewise does
+not guarantee a gain. The `aux_control` arm measures the duplicated loss,
+shared Detect-head forward, and gradient-path effects that HBS/API would
+otherwise confound. No arm has been GPU-trained, SimD calibration has not run,
+and all AP and latency results are pending; see the
+[prospective protocol](docs/SET_SIMD_EXPERIMENTS.md).
 
 Implementation details for the extension modules are documented in
 [NEW_MODULES.md](docs/NEW_MODULES.md). Source attribution and licenses are recorded
@@ -130,22 +145,6 @@ at backbone layers 4, 6, and 8. The GhostConv arm instead replaces four stride-2
 downsampling convolutions, so comparisons involving GhostConv still include a
 placement and wrapper difference. See [NEW_MODULES.md](docs/NEW_MODULES.md) for the
 exact definitions and source provenance.
-
-## The original Gabor initialization bug
-
-In the historical MNIST code, the Gabor convolution weights were created and
-frozen, but a later generic model initializer applied Xavier initialization to
-convolution modules. Setting `requires_grad=False` prevents optimizer updates; it
-does not protect a tensor from an explicit initialization function. Consequently,
-the layer described as Gabor no longer contained the intended analytic filters by
-the time training began.
-
-This migration corrects that problem by storing the analytic bank as a persistent
-buffer and applying it with a functional convolution before a learned projection.
-Generic module initialization and optimizers cannot overwrite that buffer. A
-normalized fixed random bank with identical shape provides the necessary control.
-Because this is a correction, the detector experiment does not reproduce the
-historical MNIST checkpoint's actual computation.
 
 ## Completed module extension study
 

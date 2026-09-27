@@ -1,0 +1,172 @@
+test_letterbox_ground_truth_matches_centered_ultralytics_geometry (test_calibrate_simd.CalibrateSimDTests) ... ok
+test_partial_execution_requires_explicit_debug_mode (test_calibrate_simd.CalibrateSimDTests) ... ok
+test_blocks_use_plain_convolutions_and_expected_expansions (test_classic_blocks.ClassicBlockTests) ... ok
+test_fasternet_partial_convolution_touches_one_quarter (test_classic_blocks.ClassicBlockTests) ... ok
+test_odd_spatial_shapes_and_finite_gradients (test_classic_blocks.ClassicBlockTests) ... ok
+test_state_dict_roundtrip_preserves_forward (test_classic_blocks.ClassicBlockTests) ... ok
+test_box_is_clipped_to_image_bounds (test_data.AnnotationConversionTests) ... ok
+test_class_eleven_and_unsupported_class_are_dropped (test_data.AnnotationConversionTests) ... ok
+test_ignored_flags_overlap_but_drop_reason_is_exclusive (test_data.AnnotationConversionTests) ... ok
+test_invalid_and_outside_boxes_are_accounted (test_data.AnnotationConversionTests) ... ok
+test_valid_box_maps_class_and_normalizes (test_data.AnnotationConversionTests) ... ok
+test_dataset_yaml_uses_absolute_posix_root (test_data.DatasetPreparationTests) ... ok
+test_prepare_split_preserves_source_and_writes_portable_manifest (test_data.DatasetPreparationTests) ... ok
+test_subset_selection_is_reproducible_and_sorted (test_data.DatasetPreparationTests) ... ok
+test_validates_budget_fingerprints_and_checkpoint (test_evidence.CompletionValidationTests) ... ok
+test_code_fingerprint_ignores_runner_but_tracks_training_sources (test_evidence.FingerprintTests) ... ok
+test_data_fingerprint_tracks_images_and_labels (test_evidence.FingerprintTests) ... ok
+test_environment_identity_has_required_dependencies (test_evidence.FingerprintTests) ... ok
+test_latency_rejects_unfused_record (test_finalize_realtime.FinalizeRealtimeTests) ... ok
+test_latency_requires_matching_hashes (test_finalize_realtime.FinalizeRealtimeTests) ... ok
+test_legacy_manifest_detects_changed_bytes (test_finalize_realtime.FinalizeRealtimeTests) ... ok
+test_readme_update_is_marker_bounded (test_finalize_realtime.FinalizeRealtimeTests) ... ok
+test_training_batches_must_match_arm_and_nbs (test_finalize_realtime.FinalizeRealtimeTests) ... ok
+test_verify_epochs_requires_selected_best (test_finalize_realtime.FinalizeRealtimeTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_all_variants_preserve_detection_graph (test_model.DetectorTests) ... ok
+test_checkpoint_selection_uses_only_ap50_95 (test_model.DetectorTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+test_full_model_fusion_preserves_predictions_and_removes_all_bn (test_model.DetectorTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_module_initialization_matches_single_and_full (test_model.DetectorTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_shared_head_weights_and_rng_match_across_arms (test_model.DetectorTests) ... ok
+test_detector_block_shapes_and_gradients (test_modules.BlockTests) ... ok
+test_ghost_rejects_odd_output_channels (test_modules.BlockTests) ... ok
+test_se_supports_channels_below_reduction (test_modules.BlockTests) ... ok
+test_bank_survives_initializer_and_optimizer_step (test_modules.GaborStemTests) ... ok
+test_filter_normalization_and_state_dict_roundtrip (test_modules.GaborStemTests) ... ok
+test_random_seed_is_local_and_modes_differ (test_modules.GaborStemTests) ... ok
+test_shape_fixed_bank_and_projection_gradients (test_modules.GaborStemTests) ... ok
+test_filter_clip_and_raw_area_size (test_occlusion.AnnotationTests) ... ok
+test_matching_is_class_aware_confidence_ordered_and_one_to_one (test_occlusion.MatchingTests) ... ok
+test_prediction_list_inputs_are_bounded_to_requested_batch (test_occlusion.MatchingTests) ... ok
+test_strata_are_aggregated_from_one_global_match_set (test_occlusion.MatchingTests) ... ok
+test_metric_validator_rejects_inconsistent_counts (test_postprocess.DiagnosticProvenanceTests) ... ok
+test_raw_digest_tracks_image_and_annotation_bytes (test_postprocess.DiagnosticProvenanceTests) ... ok
+test_reuse_requires_version_semantics_and_raw_digest (test_postprocess.DiagnosticProvenanceTests) ... ok
+test_ap50_95_trainer_selection_logic (test_realtime_models.RealtimeModelTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_fair_transfer_is_semantic_auditable_and_reproducible (test_realtime_models.RealtimeModelTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_official_standard_and_p2_graphs_preserve_shapes (test_realtime_models.RealtimeModelTests) ... ok
+test_exact_for_mixed_dense_empty_and_multiclass_images (test_realtime_performance.ChunkedAssignerTests) ... ok
+test_exact_for_no_ground_truth_slots (test_realtime_performance.ChunkedAssignerTests) ... ok
+test_exact_when_one_dense_image_exceeds_budget (test_realtime_performance.ChunkedAssignerTests) ... ok
+test_exact_with_noncontiguous_valid_gt_slots (test_realtime_performance.ChunkedAssignerTests) ... ok
+test_invalid_budget_rejected (test_realtime_performance.ChunkedAssignerTests) ... ok
+test_infinite_loader_does_not_create_second_persistent_iterator_owner (test_realtime_performance.PerformanceLoaderTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+test_checkpoint_captures_current_rng_states (test_realtime_trainer.RealtimeTrainerTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_checkpoint_is_atomic_fp32_native_and_complete (test_realtime_trainer.RealtimeTrainerTests) ... ok
+Resume checkpoint already completed the requested epoch budget; running final validation without another training epoch.
+test_completed_budget_resume_finalizes_without_training_an_extra_epoch (test_realtime_trainer.RealtimeTrainerTests) ... ok
+test_resume_reconciles_csv_and_missing_new_best_to_last_boundary (test_realtime_trainer.RealtimeTrainerTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_semantic_get_model_and_exact_resume_model (test_realtime_trainer.RealtimeTrainerTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_setup_installs_chunked_assignment_on_raw_and_ema_models (test_realtime_trainer.RealtimeTrainerTests) ... ok
+test_validation_loader_caps_batch_at_32 (test_realtime_trainer.RealtimeTrainerTests) ... ok
+test_paired_delta_plot_supports_partial_pairs (test_report_extension.ExtensionReportTests) ... ok
+test_paired_deltas_match_only_the_same_seed (test_report_extension.ExtensionReportTests) ... ok
+test_protocol_matrix_drives_expected_runs (test_report_extension.ExtensionReportTests) ... ok
+test_size_recall_is_optional_and_aggregates_real_values (test_report_extension.ExtensionReportTests) ... ok
+test_completed_requires_protocol_identity_and_exported_checkpoint (test_report_realtime.RealtimeReportIdentityTests) ... ok
+test_failed_queue_overrides_stale_running_progress_for_same_arm_only (test_report_realtime.RealtimeReportIdentityTests) ... ok
+test_paused_queue_overrides_stale_failure_without_becoming_completed (test_report_realtime.RealtimeReportIdentityTests) ... ok
+test_tiny_optimization_pending_arms_keep_distinct_labels (test_report_realtime.RealtimeReportIdentityTests) ... ok
+test_assignment_thresholds_and_minimum_positive_match (test_simd.SimDTests) ... ok
+test_equations_match_manual_location_and_shape_terms (test_simd.SimDTests) ... ok
+test_extreme_finite_coordinates_remain_bounded (test_simd.SimDTests) ... ok
+test_identical_and_aligned_boxes (test_simd.SimDTests) ... ok
+test_invalid_geometry_and_normalizers_fail_closed (test_simd.SimDTests) ... ok
+test_pairwise_broadcasting_is_symmetric (test_simd.SimDTests) ... ok
+test_trainset_normalizers_stream_anchor_chunks (test_simd.SimDTests) ... ok
+test_blocks_train_and_serialize_with_fixed_filters (test_spatial_blocks.SpatialOperatorTests) ... ok
+test_dynamic_aggregation_matches_independent_shift_reference_and_gradients (test_spatial_blocks.SpatialOperatorTests) ... ok
+test_haar_analysis_synthesis_roundtrip_with_odd_padding (test_spatial_blocks.SpatialOperatorTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_new_arms_preserve_common_weights_rng_and_fusion_outputs (test_spatial_blocks.SpatialOperatorTests) ... ok
+test_wavelet_profiler_includes_fixed_transform_macs (test_spatial_blocks.SpatialOperatorTests) ... ok
+test_branches_are_normalized_independently_per_level (test_spectral_enhancement.APITests) ... ok
+test_detached_injection_preserves_auxiliary_backprop (test_spectral_enhancement.APITests) ... ok
+test_hot_path_propagates_nonfinite_gradient_without_sync_validation (test_spectral_enhancement.APITests) ... ok
+test_zero_and_unused_gradients_are_safe (test_spectral_enhancement.APITests) ... ok
+test_empty_box_tensor (test_spectral_enhancement.FeatureMaskTests) ... ok
+test_multiscale_border_tiny_and_empty_images (test_spectral_enhancement.FeatureMaskTests) ... ok
+test_vectorized_difference_rasterizer_matches_loop_reference (test_spectral_enhancement.FeatureMaskTests) ... ok
+test_hierarchy_preserves_level_shapes (test_spectral_enhancement.HBSTests) ... ok
+test_kernel_formula_and_defaults (test_spectral_enhancement.HBSTests) ... ok
+test_shape_finiteness_and_gradients (test_spectral_enhancement.HBSTests) ... ok
+test_smoothing_preserves_foreground_and_allows_negative_background (test_spectral_enhancement.HBSTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+test_all_arms_one_step_and_bn_updated_once (test_tiny_optimization.TinyOptimizationTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+test_checkpoint_roundtrip_and_p2 (test_tiny_optimization.TinyOptimizationTests) ... ok
+test_disabled_path_matches_native_loss_and_gradients (test_tiny_optimization.TinyOptimizationTests) ... ok
+test_empty_targets_api_and_simd_remain_finite (test_tiny_optimization.TinyOptimizationTests) ... ok
+test_inference_does_not_read_labels_and_export_matches_native (test_tiny_optimization.TinyOptimizationTests) ... ok
+test_simd_needs_explicit_calibration (test_tiny_optimization.TinyOptimizationTests) ... ok
+test_trainer_reinstalls_simd_on_raw_and_ema (test_tiny_optimization.TinyOptimizationTests) ... ok
+test_calibration_requires_full_matching_provenance (test_train_tiny_optimization.TinyOptimizationLauncherTests) ... ok
+test_default_is_cuda_free_seven_arm_plan (test_train_tiny_optimization.TinyOptimizationLauncherTests) ... ok
+test_execute_requires_one_arm (test_train_tiny_optimization.TinyOptimizationLauncherTests) ... ok
+Overriding model.yaml nc=80 with nc=10
+Overriding model.yaml nc=80 with nc=10
+test_export_uses_ema_and_strips_both_native_detector_copies (test_train_tiny_optimization.TinyOptimizationLauncherTests) ... ok
+test_realtime_stage1_suite_is_rejected (test_train_tiny_optimization.TinyOptimizationLauncherTests) ... usage: python.exe -m unittest [-h] [--suite SUITE]
+                              [--arm {baseline,aux_control,hbs,api,set,simd,set_simd}]
+                              [--architecture {standard,p2}] [--imgsz IMGSZ]
+                              [--epochs EPOCHS] [--batch BATCH]
+                              [--workers WORKERS] [--seed SEED] [--data DATA]
+                              [--pretrained PRETRAINED]
+                              [--calibration CALIBRATION] [--execute]
+                              [--resume] [--resume-paused]
+python.exe -m unittest: error: suite must be a safe new result directory name
+ok
+test_simd_parameters_are_frozen_into_both_simd_arms (test_train_tiny_optimization.TinyOptimizationLauncherTests) ... ok
+test_verify_protocol_rejects_changed_calibration_bytes_with_same_values (test_train_tiny_optimization.TinyOptimizationLauncherTests) ... ok
+test_expected_run_count_defaults_to_protocol (test_verify_extension.ExtensionVerifierTests) ... ok
+test_extension_layer_specs (test_verify_extension.ExtensionVerifierTests) ... ok
+test_snapshot_hashes_are_checked_against_protocol (test_verify_extension.ExtensionVerifierTests) ... ok
+
+----------------------------------------------------------------------
+Ran 107 tests in 5.795s
+
+OK

@@ -42,3 +42,24 @@ their source files are not redistributed. Pinned source URLs and audit hashes
 are recorded in `classic_module_sources.json`, `wtconv_sources.json`, and
 `lsconv_sources.json`. These experiments adapt operators into a YOLO detector
 and do not reproduce the authors' complete networks or optimized runtimes.
+
+The prospective training-only tiny-object study adapts two additional papers.
+HBS and API follow [SET: Spectral Enhancement for Tiny Object Detection (CVPR
+2025)](https://openaccess.thecvf.com/content/CVPR2025/html/Sun_SET_Spectral_Enhancement_for_Tiny_Object_Detection_CVPR_2025_paper.html).
+The authors' [official repository](https://github.com/HuixinSun/SET) was audited
+at commit
+[`9208fbc4cfe571be4c15dccad8db1665cfdcb9d6`](https://github.com/HuixinSun/SET/tree/9208fbc4cfe571be4c15dccad8db1665cfdcb9d6).
+It had no top-level license file at that revision, so none of its source code is
+copied here. The local implementation independently expresses the mathematical
+method for YOLO under this project's AGPL-3.0 license. Its source mapping is in
+[`SET_SOURCE_AUDIT.md`](SET_SOURCE_AUDIT.md).
+
+The SimD reference follows [Similarity Distance-Based Label Assignment for Tiny
+Object Detection (IROS 2024)](https://arxiv.org/html/2407.02394v3). Its
+[official repository](https://github.com/cszzshi/SimD) was audited at commit
+[`2b16d4ea2f823e0cb8a0c87a89f7f0296be53a83`](https://github.com/cszzshi/SimD/tree/2b16d4ea2f823e0cb8a0c87a89f7f0296be53a83)
+and carries an Apache-2.0 OpenMMLab license notice. No upstream implementation
+is vendored. The local formula, streaming estimator, and YOLO TAL adaptation
+were independently implemented under AGPL-3.0; known upstream issues and the
+anchor-based-to-anchor-free boundary are in
+[`SIMD_SOURCE_AUDIT.md`](SIMD_SOURCE_AUDIT.md).

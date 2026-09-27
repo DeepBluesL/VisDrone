@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-09-27T09:18:09.003192+00:00",
+  "status": "implementation_verified_cpu_only",
+  "experiment_runs_completed": 0,
+  "gpu_training_started": false,
+  "cuda_visible_devices": "",
+  "tests": {
+    "command": ".venv/Scripts/python.exe -m unittest discover -s tests -v",
+    "passed": 107,
+    "failed": 0,
+    "log": "results/tiny_optimization/cpu_tests.txt"
+  },
+  "checks": [
+    "All seven arms: synthetic CPU forward, backward, optimizer step; finite losses and gradients",
+    "Disabled optimization reproduces native loss and gradients exactly",
+    "Shared Detect-head BatchNorm running buffers update only once per batch",
+    "HBS foreground remains unchanged after background smoothing",
+    "API uses per-branch gradients with detached perturbations; main and auxiliary gradients remain connected",
+    "P2 CPU backward and training-model serialization roundtrip",
+    "Exported deployment forward matches native detector; best EMA, not raw, exported",
+    "Changed calibration bytes rejected even when m/n values are unchanged",
+    "Paused queue refuses automatic restart; seven-arm plan initializes no CUDA"
+  ],
+  "structure_parameters": {
+    "architecture": "standard",
+    "classes": 10,
+    "baseline_and_deployment": 3012798,
+    "set_training": 4055790,
+    "hbs_training_only": 1042992
+  },
+  "limitations": [
+    "No SET/SimD accuracy or latency results",
+    "GPU AMP, memory, throughput, calibration and training remain unexecuted",
+    "SimD-TAL and SET are explicit YOLO adaptations, not exact published detector reproductions"
+  ],
+  "code_sha256": {
+    "visdrone_migration/tiny_optimization.py": "3717da82ef192feffddbd62a64015fccd448d21635613cf03fa194da72383132",
+    "visdrone_migration/spectral_enhancement.py": "be7c0ea3bdb7774cecd566674cf4cf4b3d9a7698c4af38c8f0ac26896e4dd1d4",
+    "visdrone_migration/simd.py": "fe3920235f847c53f9c4717ca8722ea3aeff05d1dfd62cc3553f3baa55ebffc6",
+    "scripts/calibrate_simd.py": "0f1e68cd24273320caf7cb936eef114d3bea32eabd1d7dcbf73845f8784f142c",
+    "scripts/train_tiny_optimization.py": "a212fa69024ef013fcc9f38c38c445412640351b35cc5c5d94b99352d4cd126f",
+    "scripts/report_realtime.py": "8fc3e3843952f2838f2fcca3d3f9bbf8075e66cdc51099f86952124885da1757"
+  },
+  "legacy_evidence": {
+    "verified_artifacts": 290,
+    "unchanged": true
+  },
+  "realtime_stage1": {
+    "status": "paused",
+    "epoch": 31,
+    "budget": 100,
+    "completed_arms": 0,
+    "expected_arms": 5
+  }
+}

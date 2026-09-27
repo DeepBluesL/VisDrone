@@ -180,6 +180,13 @@ affected results are interpreted.
 
 ## Candidates examined but excluded
 
+SET was originally listed here because it is not a matched lightweight feature
+block and its official framework targets an older MMDetection/MMCV stack. It has
+now advanced to a **separate prospective training-only study**, outside the
+completed six-arm module comparison. The seven-arm design and controls are in
+[`SET_SIMD_EXPERIMENTS.md`](SET_SIMD_EXPERIMENTS.md). No SET arm has been
+trained, and this status change does not revise the completed extension results.
+
 - **[ConvNeur, CVPR 2026](https://openaccess.thecvf.com/content/CVPR2026/html/Yang_Efficiency_Follows_Global-Local_Decoupling_CVPR_2026_paper.html)**
   was examined from its [official Apache-2.0
   repository](https://github.com/ZhenyuYang01/ConvNeur).
@@ -203,13 +210,6 @@ affected results are interpreted.
   its official environment targets old PyTorch/CUDA versions. That makes a
   clean native-Windows RTX 5090 comparison substantially riskier than the
   standard-PyTorch arms.
-- **[SET, CVPR
-  2025](https://openaccess.thecvf.com/content/CVPR2025/html/Sun_SET_Spectral_Enhancement_for_Tiny_Object_Detection_CVPR_2025_paper.html)**
-  targets tiny-object detection but its [official
-  repository](https://github.com/HuixinSun/SET) provides a training framework
-  built around an older MMDetection/MMCV stack rather than a small matched
-  feature block. Its official repository also lacked a clear source license at
-  review time.
 - **[UniConvNet, ICCV
   2025](https://openaccess.thecvf.com/content/ICCV2025/html/Wang_UniConvNet_Expanding_Effective_Receptive_Field_while_Maintaining_Asymptotically_Gaussian_Distribution_ICCV_2025_paper.html)**
   is a complete backbone family rather than a compact plug-in, and its
